@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'community',
     'exchange_info',
     'fin_product',
+    'recommend',
 
     'rest_framework',
     'rest_framework.authtoken',

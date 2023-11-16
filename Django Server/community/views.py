@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.decorators import permission_classes
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from django.shortcuts import get_list_or_404, get_object_or_404
 from django.db.models import Count
 
@@ -60,7 +60,7 @@ def post_detail(request, post_pk):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticatedOrReadOnly])
+@permission_classes([IsAuthenticated])
 def create_comment(request, post_pk):
     serializer = CommentSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
@@ -74,24 +74,26 @@ def comment_detail(request, comment_pk):
     comment = get_object_or_404(Comment, pk=comment_pk)
 
     if request.method == 'GET':
-        serializer = CommentSerializer(comment)
-        return Response(serializer.data)
+        # serializer = CommentSerializer(comment)
+        # return Response(serializer.data)
+        return Response(status=status.HTTP_404_NOT_FOUND)
     
     if comment.user.id != request.user.id:
-        return Response({'오류':'다른 사람이 작성한 게시글을 수정 또는 삭제할 수 없습니다.'})
+        return Response({'오류':'다른 사람이 작성한 댓글을 수정 또는 삭제할 수 없습니다.'})
     
     if request.method == 'DELETE':
         comment.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
     elif request.method == 'PUT':
-        serializer = CommentSerializer(comment, data=request.data, partial=True)
+        serializer = CommentSerializer(comment, data=request.data)
         if serializer.is_valid(raise_exception=True):
+            serializer.save()
             return Response(serializer.data)
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticatedOrReadOnly])
+@permission_classes([IsAuthenticated])
 def post_like(request, post_pk):
     post = get_object_or_404(Post, pk=post_pk)
 
@@ -104,16 +106,16 @@ def post_like(request, post_pk):
     like_count = post.like_users.aggregate(count=Count('id'))['count']
 
     data = {
-        'isLiked': is_liked,
+        'isLiked': not is_liked,
         'likeCount': like_count
     }
     return Response(data)
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticatedOrReadOnly])
+@permission_classes([IsAuthenticated])
 def comment_like(request, comment_pk):
-    comment = get_object_or_404(Post, pk=comment_pk)
+    comment = get_object_or_404(Comment, pk=comment_pk)
 
     is_liked = comment.like_users.filter(pk=request.user.pk).exists()
     if request.user in comment.like_users.all():
@@ -123,7 +125,7 @@ def comment_like(request, comment_pk):
     like_count = comment.like_users.aggregate(count=Count('id'))['count']
     
     data = {
-        'isLiked': is_liked,
+        'isLiked': not is_liked,
         'likeCount': like_count
     }
     return Response(data)

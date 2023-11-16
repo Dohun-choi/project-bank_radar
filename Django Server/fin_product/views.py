@@ -3,17 +3,20 @@ from rest_framework import status
 import requests
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from django.shortcuts import get_list_or_404
+from django.shortcuts import get_object_or_404, get_list_or_404
+from django.db.models import Count
 
 from django.conf import settings
 from .models import (
     DepositProducts, SavingProducts,
-    DepositOptions, SavingOptions
+    DepositOptions, SavingOptions,
+    DepositDebate, SavingDebate
     )
 from .serializers import (
     DepositProductsSerializer, DepositOptionsSerializer,
     SavingProductsSerializer, SavingOptionsSerializer,
-    GETDepositProductsSerializer, GETSavingProductsSerializer
+    GETDepositProductsSerializer, GETSavingProductsSerializer,
+    DepositDebatesSerializer, SavingDebatesSerializer
     )
 API_key = settings.API_KEY_FIN_PRD
 
@@ -23,15 +26,23 @@ def update(D_or_S, productserializer, optionserializer, productmodel, optionmode
     response = requests.get(url).json()
 
     if not response or not response.get('result'):
+        print('respone오류')
         return False
-    productmodel.objects.all().delete()
-    optionmodel.objects.all().delete()
+
     try:
         for lst in response.get('result').get('baseList'):
-            product_serializer = productserializer(data=lst)
+            fin_prdt_cd = lst.get('fin_prdt_cd')
+            
+            try:
+                product = productmodel.objects.get(fin_prdt_cd=fin_prdt_cd)
+                product_serializer = productserializer(product, data=lst)
+            except productmodel.DoesNotExist:
+                product_serializer = productserializer(data=lst)
+
             if product_serializer.is_valid(raise_exception=True):
                 product_serializer.save()
-        
+
+        optionmodel.objects.all().delete()
         for lst in response.get('result').get('optionList'):
             option_serializer = optionserializer(data=lst)
             if option_serializer.is_valid(raise_exception=True):
@@ -61,6 +72,80 @@ def deposit_from_DB(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def saving_from_DB(request):
-    data = get_list_or_404(DepositProducts)
+    data = get_list_or_404(SavingProducts)
     serializer = GETSavingProductsSerializer(data, many=True)
     return Response(serializer.data)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def deposit_likes(request, fin_prdt_cd):
+    deposit = get_object_or_404(DepositProducts, pk=fin_prdt_cd)
+
+    is_liked = deposit.like_users.filter(pk=request.user.pk).exists()
+
+    if is_liked:
+        deposit.like_users.remove(request.user)
+    else:
+        deposit.like_users.add(request.user)
+            
+    like_count = deposit.like_users.aggregate(count=Count('id'))['count']
+
+    data = {
+        'isLiked': not is_liked,
+        'likeCount': like_count
+    }
+    return Response(data)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def saving_likes(request, fin_prdt_cd):
+    saving = get_object_or_404(SavingProducts, pk=fin_prdt_cd)
+
+    is_liked = saving.like_users.filter(pk=request.user.pk).exists()
+
+    if is_liked:
+        saving.like_users.remove(request.user)
+    else:
+        saving.like_users.add(request.user)
+            
+    like_count = saving.like_users.aggregate(count=Count('id'))['count']
+
+    data = {
+        'isLiked': not is_liked,
+        'likeCount': like_count
+    }
+    return Response(data)
+
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def deposit_debate(request, fin_prdt_cd):
+    if request.method == 'GET':
+        data = get_list_or_404(DepositDebate, fin_prdt_cd=fin_prdt_cd)
+        serializer = DepositDebatesSerializer(data, many=True)
+        return Response(serializer.data)
+    
+    elif request.method == 'POST':
+        serializer = DepositDebatesSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            deposit = get_object_or_404(DepositProducts, fin_prdt_cd=fin_prdt_cd)
+            serializer.save(fin_prdt_cd=deposit, user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def saving_debate(request, fin_prdt_cd):
+    if request.method == 'GET':
+        data = get_list_or_404(SavingDebate, fin_prdt_cd=fin_prdt_cd)
+        serializer = SavingDebatesSerializer(data, many=True)
+        return Response(serializer.data)
+    
+    elif request.method == 'POST':
+        serializer = SavingDebatesSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            saving = get_object_or_404(SavingProducts, fin_prdt_cd=fin_prdt_cd)
+            serializer.save(fin_prdt_cd=saving, user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)

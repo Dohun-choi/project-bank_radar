@@ -3,7 +3,7 @@ from django.conf import settings
 
 
 class DepositProducts(models.Model):
-    fin_prdt_cd = models.TextField(unique=True)                      # 금융 상품 코드
+    fin_prdt_cd = models.CharField(max_length=30, primary_key=True)  # 금융 상품 코드
     dcls_month = models.IntegerField(null=True, default='알수 없음')  # 공시 제출 월
     kor_co_nm = models.TextField(null=True, default='알수 없음')      # 금융 회사명
     fin_prdt_nm = models.TextField(null=True, default='알수 없음')    # 금융 상품명
@@ -13,7 +13,14 @@ class DepositProducts(models.Model):
     join_way = models.TextField(null=True, default='알수 없음')       # 가입 방법
     max_limit = models.IntegerField(null=True, default='정보 없음')   # 최고한도
     spcl_cnd = models.TextField(null=True, default='알수 없음')       # 우대 조건
-    like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_deposit')
+    like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_deposits')
+
+
+class DepositDebate(models.Model):
+    fin_prdt_cd = models.ForeignKey(DepositProducts, related_name="comment", on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='comments_on_deposits' , on_delete=models.CASCADE)
+    content = models.CharField(max_length=150)
+    created = models.DateTimeField(auto_now_add=True)
 
 
 class DepositOptions(models.Model):
@@ -26,7 +33,7 @@ class DepositOptions(models.Model):
 
 
 class SavingProducts(models.Model):
-    fin_prdt_cd = models.TextField(unique=True)                      # 금융 상품 코드
+    fin_prdt_cd = models.CharField(max_length=30, primary_key=True)  # 금융 상품 코드
     dcls_month = models.IntegerField(null=True, default='알수 없음')  # 공시 제출 월
     kor_co_nm = models.TextField(null=True, default='알수 없음')      # 금융 회사명
     fin_prdt_nm = models.TextField(null=True, default='알수 없음')    # 금융 상품명
@@ -36,7 +43,14 @@ class SavingProducts(models.Model):
     join_way = models.TextField(null=True, default='알수 없음')       # 가입 방법
     max_limit = models.IntegerField(null=True, default='정보 없음')   # 최고한도
     spcl_cnd = models.TextField(null=True, default='알수 없음')       # 우대 조건
-    like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_saving')
+    like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_savings')
+
+
+class SavingDebate(models.Model):
+    fin_prdt_cd = models.ForeignKey(SavingProducts, related_name="comment", on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='comments_on_savings' , on_delete=models.CASCADE)
+    content = models.CharField(max_length=150)
+    created = models.DateTimeField(auto_now_add=True)
 
 
 class SavingOptions(models.Model):
