@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'accounts',
     'community',
     'exchange_info',
+    'fin_product',
 
     'rest_framework',
     'rest_framework.authtoken',
@@ -46,6 +47,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'dj_rest_auth.registration',
+    'mptt',
     
     'django.contrib.admin',
     'django.contrib.auth',
@@ -59,10 +61,6 @@ REST_FRAMEWORK = {
     # Authentication
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
-    ],
-    # permission
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',
     ],
 }
 
@@ -157,6 +155,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.User'
 
+## API 키
 env = environ.Env(
     # set casting, default value
     DEBUG=(bool, False)
@@ -165,3 +164,4 @@ env = environ.Env(
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 API_KEY_EXCHANGE = env('API_KEY_exchange')
+API_KEY_FIN_PRD = env('API_KEY_financial_product')

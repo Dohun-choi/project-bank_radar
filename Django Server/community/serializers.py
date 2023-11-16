@@ -17,14 +17,10 @@ class CommentSerializer(serializers.ModelSerializer):
         
 
 class PostSerializer(serializers.ModelSerializer):
-    comment_set = CommentSerializer(many=True)
+    comment_set = CommentSerializer(many=True, read_only=True)
 
     class Meta:
         model = Post
         fields = '__all__'
         read_only_fields = ('user', 'like_users')
-
-
-
-
 

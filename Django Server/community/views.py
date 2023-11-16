@@ -38,7 +38,7 @@ def post_detail(request, post_pk):
         return Response(serializer.data)
 
     if post.user.id != request.user.id:
-        return Response({'오류':'다른 사람이 작성한 게시글을 수정 또는 삭제할 수 없습니다.'})
+        return Response({'detail':'다른 사람이 작성한 게시글을 수정 또는 삭제할 수 없습니다.'})
     
     if request.method == 'DELETE':
         post.delete()
@@ -51,22 +51,22 @@ def post_detail(request, post_pk):
             return Response(serializer.data)
 
 
-@api_view(['GET'])
-def comments(request, post_pk):
-    post = get_object_or_404(Post, pk=post_pk)
-    comment = get_list_or_404(Comment, post=post)
-    serializer = CommentSerializer(comment, many=True)
-    return Response(serializer.data)
+# @api_view(['GET'])
+# def comments(request, post_pk):
+#     post = get_object_or_404(Post, pk=post_pk)
+#     comment = get_list_or_404(Comment, post=post)
+#     serializer = CommentSerializer(comment, many=True)
+#     return Response(serializer.data)
 
 
-# @api_view(['POST'])
-# @permission_classes([IsAuthenticatedOrReadOnly])
-# def create_comment(request, post_pk):
-#     serializer = CommentSerializer(data=request.data)
-#     if serializer.is_valid(raise_exception=True):
-#         post = Post.objects.get(pk=post_pk)
-#         serializer.save(post=post, user=request.user)
-#         return Response(serializer.data, status=status.HTTP_201_CREATED)
+@api_view(['POST'])
+@permission_classes([IsAuthenticatedOrReadOnly])
+def create_comment(request, post_pk):
+    serializer = CommentSerializer(data=request.data)
+    if serializer.is_valid(raise_exception=True):
+        post = Post.objects.get(pk=post_pk)
+        serializer.save(post=post, user=request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 @api_view(['GET', 'DELETE', 'PUT'])
 @permission_classes([IsAuthenticatedOrReadOnly])
