@@ -11,7 +11,7 @@ class DepositProducts(models.Model):
     join_deny = models.IntegerField(null=True, default=-1)           # 가입 제한(1: 제한 없음, 2: 서민전용, 3:일부제한)
     join_member = models.TextField(null=True, default='알수 없음')    # 가입 대상
     join_way = models.TextField(null=True, default='알수 없음')       # 가입 방법
-    max_limit = models.IntegerField(null=True, default='정보 없음')   # 최고한도
+    max_limit = models.IntegerField(null=True, default='-1')         # 최고한도
     spcl_cnd = models.TextField(null=True, default='알수 없음')       # 우대 조건
     like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_deposits')
 
@@ -41,7 +41,7 @@ class SavingProducts(models.Model):
     join_deny = models.IntegerField(null=True, default=-1)           # 가입 제한(1: 제한 없음, 2: 서민전용, 3:일부제한)
     join_member = models.TextField(null=True, default='알수 없음')    # 가입 대상
     join_way = models.TextField(null=True, default='알수 없음')       # 가입 방법
-    max_limit = models.IntegerField(null=True, default='정보 없음')   # 최고한도
+    max_limit = models.IntegerField(null=True, default=-1)   # 최고한도
     spcl_cnd = models.TextField(null=True, default='알수 없음')       # 우대 조건
     like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_savings')
 

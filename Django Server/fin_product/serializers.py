@@ -41,11 +41,6 @@ class SavingOptionsSerializer(serializers.ModelSerializer):
 
 
 class GETDepositProductsSerializer(serializers.ModelSerializer):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if 'context' in kwargs:
-            self.context.update({'request': kwargs['context'].get('request')})
-            
     options = DepositOptionsSerializer(many=True, read_only=True)
     like_count = serializers.IntegerField(source='like_users.count', read_only=True)
     is_liked = serializers.SerializerMethodField(method_name='has_liked', read_only=True)
@@ -66,10 +61,20 @@ class GETDepositProductsSerializer(serializers.ModelSerializer):
 
 class GETSavingProductsSerializer(serializers.ModelSerializer):
     options = SavingOptionsSerializer(many=True, read_only=True)
+    like_count = serializers.IntegerField(source='like_users.count', read_only=True)
+    is_liked = serializers.SerializerMethodField(method_name='has_liked', read_only=True)
+
     class Meta:
         model = DepositProducts
         fields = '__all__'
         read_only_fields = ('like_users',)
+    
+    def has_liked(self, obj):
+        request = self.context.get('request')
+        print(self.context)
+        if request and request.user.is_authenticated:
+            return obj.like_users.filter(id=request.user.id).exists()
+        return False
 
 
 class DepositDebatesSerializer(serializers.ModelSerializer):

@@ -1,8 +1,8 @@
+from datetime import date, timedelta
+
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from rest_framework import status
-from rest_framework.decorators import permission_classes
-from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_list_or_404, get_object_or_404
 from django.db.models import Count, Value, Q
 from django.db.models.functions import Coalesce
@@ -13,7 +13,7 @@ from fin_product.models import DepositProducts, SavingProducts
 from fin_product.serializers import GETDepositProductsSerializer, GETSavingProductsSerializer
 
 @api_view(['GET', 'PUT'])
-@permission_classes([IsAuthenticated])
+@login_required
 def user_info(request):
     if request.method == 'GET':
         profile = get_object_or_404(UserProfile, user=request.user)
@@ -29,7 +29,7 @@ def user_info(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@login_required
 def deposits_recommend(request, group_type):
     if group_type not in {'age', 'monthly_income', 'assets', 'likes'}:
         return Response({'error': 'Invalid group_type'})
@@ -65,7 +65,7 @@ def deposits_recommend(request, group_type):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@login_required
 def savings_recommend(request, group_type):
     if group_type not in {'age', 'monthly_income', 'assets', 'likes'}:
         return Response({'error': 'Invalid group_type'})
@@ -98,3 +98,11 @@ def savings_recommend(request, group_type):
     serializer = GETSavingProductsSerializer(top_10_liked_savings, many=True, context={'request':request})
 
     return Response(serializer.data)
+
+
+@api_view(['GET'])
+@login_required
+def travel_recommand(request, save_period):
+    today = date.today()
+
+    date_after_a_month = today + timedelta(days=30)

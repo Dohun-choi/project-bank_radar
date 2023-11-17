@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.decorators import permission_classes
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django.shortcuts import get_list_or_404, get_object_or_404
 from django.db.models import Count
 
@@ -60,13 +60,14 @@ def post_detail(request, post_pk):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def create_comment(request, post_pk):
     serializer = CommentSerializer(data=request.data, context={'request':request})
     if serializer.is_valid(raise_exception=True):
         post = Post.objects.get(pk=post_pk)
         serializer.save(post=post, user=request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 @api_view(['GET', 'DELETE', 'PUT'])
 @permission_classes([IsAuthenticatedOrReadOnly])
@@ -93,7 +94,7 @@ def comment_detail(request, comment_pk):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def post_like(request, post_pk):
     post = get_object_or_404(Post, pk=post_pk)
 
@@ -113,7 +114,7 @@ def post_like(request, post_pk):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def comment_like(request, comment_pk):
     comment = get_object_or_404(Comment, pk=comment_pk)
 

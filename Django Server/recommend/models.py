@@ -46,3 +46,9 @@ class UserProfile(models.Model):
     def save(self, *args, **kwargs):
         self.save_group_values()
         super().save(*args, **kwargs)
+
+
+class Travel(models.Model):
+    country = models.TextField(unique=True)
+    when = models.TextField()
+    cost = models.IntegerField()

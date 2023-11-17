@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework import status
 import requests
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly
 from django.shortcuts import get_list_or_404
 
 from django.conf import settings
@@ -12,7 +12,7 @@ API_key = settings.API_KEY_EXCHANGE
 API_ERROR = {2 : 'DATA코드 오류', 3 : '인증코드 오류', 4 : '일일제한횟수 마감'}
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated, IsAdminUser])
+@permission_classes([IsAuthenticatedOrReadOnly, IsAdminUser])
 def update_exchange_DB(request):
     url = f'https://www.koreaexim.go.kr/site/program/financial/exchangeJSON?authkey={API_key}&data=AP01'
     response = requests.get(url).json()
@@ -31,6 +31,7 @@ def update_exchange_DB(request):
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def exchange_from_DB(request):
     data = get_list_or_404(ExchangeInfo)
     serializer = ExchangeSerializers(data, many=True)

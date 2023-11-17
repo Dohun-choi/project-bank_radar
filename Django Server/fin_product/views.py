@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework import status
 import requests
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.db.models import Count
 
@@ -54,7 +54,7 @@ def update(D_or_S, productserializer, optionserializer, productmodel, optionmode
         return False, '알 수 없는 에러'
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated, IsAdminUser])
+@permission_classes([IsAuthenticatedOrReadOnly, IsAdminUser])
 def update_product(request):
     deposit_updated = update('deposit', DepositProductsSerializer, DepositOptionsSerializer, DepositProducts, DepositOptions)
     saving_updated = update('saving', SavingProductsSerializer, SavingOptionsSerializer, SavingProducts, SavingOptions)
@@ -78,7 +78,7 @@ def saving_from_DB(request):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def deposit_likes(request, fin_prdt_cd):
     deposit = get_object_or_404(DepositProducts, pk=fin_prdt_cd)
 
@@ -99,7 +99,7 @@ def deposit_likes(request, fin_prdt_cd):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def saving_likes(request, fin_prdt_cd):
     saving = get_object_or_404(SavingProducts, pk=fin_prdt_cd)
 
@@ -120,7 +120,7 @@ def saving_likes(request, fin_prdt_cd):
 
 
 @api_view(['GET', 'POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def deposit_debate(request, fin_prdt_cd):
     if request.method == 'GET':
         data = get_list_or_404(DepositDebate, fin_prdt_cd=fin_prdt_cd)
@@ -136,7 +136,7 @@ def deposit_debate(request, fin_prdt_cd):
     
 
 @api_view(['GET', 'POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def saving_debate(request, fin_prdt_cd):
     if request.method == 'GET':
         data = get_list_or_404(SavingDebate, fin_prdt_cd=fin_prdt_cd)
