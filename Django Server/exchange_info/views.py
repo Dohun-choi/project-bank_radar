@@ -9,6 +9,7 @@ from django.conf import settings
 from .serializers import ExchangeSerializers
 from .models import ExchangeInfo
 API_key = settings.API_KEY_EXCHANGE
+API_ERROR = {2 : 'DATA코드 오류', 3 : '인증코드 오류', 4 : '일일제한횟수 마감'}
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, IsAdminUser])
@@ -20,6 +21,8 @@ def update_exchange_DB(request):
     ExchangeInfo.objects.all().delete()
 
     for li in response:
+        if li.get('result') != 1:
+            return Response({'detail': f'한국수출입 은행 OPEN API 오류 : {API_ERROR[li.get("result")]}'})
         serializer = ExchangeSerializers(data=li)
         if serializer.is_valid(raise_exception=True):
             serializer.save()

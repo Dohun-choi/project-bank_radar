@@ -25,9 +25,9 @@ def update(D_or_S, productserializer, optionserializer, productmodel, optionmode
     url = f'http://finlife.fss.or.kr/finlifeapi/{D_or_S}ProductsSearch.json?auth={API_key}&topFinGrpNo=020000&pageNo=1'
     response = requests.get(url).json()
 
-    if not response or not response.get('result'):
-        print('respone오류')
-        return False
+    if response.get('result').get('err_cd') != '000':
+        print(response.get('result').get('err_msg'))
+        return False, response.get('result').get('err_msg')
 
     try:
         for lst in response.get('result').get('baseList'):
@@ -49,24 +49,24 @@ def update(D_or_S, productserializer, optionserializer, productmodel, optionmode
                 fin_prdt_cd = productmodel.objects.get(fin_prdt_cd=lst.get('fin_prdt_cd'))
                 option_serializer.save(fin_prdt_cd=fin_prdt_cd)
 
-        return True
+        return True, True
     except:
-        return False
+        return False, '알 수 없는 에러'
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, IsAdminUser])
 def update_product(request):
     deposit_updated = update('deposit', DepositProductsSerializer, DepositOptionsSerializer, DepositProducts, DepositOptions)
     saving_updated = update('saving', SavingProductsSerializer, SavingOptionsSerializer, SavingProducts, SavingOptions)
-    if deposit_updated and saving_updated:
+    if deposit_updated[0] and saving_updated[0]:
         return Response(status=status.HTTP_201_CREATED)
-    return Response({'detail': f'적금 갱신: {saving_updated}\예금 갱신: {deposit_updated}'}, status=status.HTTP_502_BAD_GATEWAY)
+    return Response({'detail': f'적금 갱신: {saving_updated[1]}\예금 갱신: {deposit_updated[1]}'}, status=status.HTTP_502_BAD_GATEWAY)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def deposit_from_DB(request):
     data = get_list_or_404(DepositProducts)
-    serializer = GETDepositProductsSerializer(data, many=True)
+    serializer = GETDepositProductsSerializer(data, many=True, context={'request': request})
     return Response(serializer.data)
 
 @api_view(['GET'])

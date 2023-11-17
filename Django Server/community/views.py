@@ -22,7 +22,7 @@ def posts(request):
         return Response(serializer.data)
     
     elif request.method == 'POST':
-        serializer = PostSerializer(data=request.data)
+        serializer = PostSerializer(data=request.data, context={'request':request})
         if serializer.is_valid(raise_exception=True):
             serializer.save(user=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -34,7 +34,7 @@ def post_detail(request, post_pk):
     post = get_object_or_404(Post.objects.prefetch_related('comment_set').order_by('-pk'), pk=post_pk)
 
     if request.method == 'GET':
-        serializer = PostSerializer(post)
+        serializer = PostSerializer(post, context={'request':request})
         return Response(serializer.data)
 
     if post.user.id != request.user.id:
@@ -45,7 +45,7 @@ def post_detail(request, post_pk):
         return Response(status=status.HTTP_204_NO_CONTENT)
     
     elif request.method == 'PUT':
-        serializer = PostSerializer(post, data=request.data, partial=True)
+        serializer = PostSerializer(post, data=request.data, partial=True, context={'request':request})
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
@@ -62,7 +62,7 @@ def post_detail(request, post_pk):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_comment(request, post_pk):
-    serializer = CommentSerializer(data=request.data)
+    serializer = CommentSerializer(data=request.data, context={'request':request})
     if serializer.is_valid(raise_exception=True):
         post = Post.objects.get(pk=post_pk)
         serializer.save(post=post, user=request.user)
@@ -86,7 +86,7 @@ def comment_detail(request, comment_pk):
         return Response(status=status.HTTP_204_NO_CONTENT)
     
     elif request.method == 'PUT':
-        serializer = CommentSerializer(comment, data=request.data)
+        serializer = CommentSerializer(comment, data=request.data, context={'request':request})
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
