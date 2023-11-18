@@ -1,7 +1,7 @@
 <template>
   <div>
-    <p> {{ post }}</p>
-
+    <p> {{ post.title }}</p>
+    
     <RouterLink :to="{name: 'DetailView', params:{id: post.id}}">Detail</RouterLink>
     <hr>
   </div>

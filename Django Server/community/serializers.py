@@ -50,7 +50,7 @@ class NestedCommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ('id', 'post', 'parent', 'content', 'like_count', 'is_liked', 'children', 'created_at', 'updated_at')
-        read_only_fields = ('user', 'like_users')
+        read_only_fields = ('post', 'user', 'like_users')
 
     def get_children(self, obj):
         children = Comment.objects.filter(post=obj.post_id, parent=obj.id)
@@ -64,13 +64,13 @@ class NestedCommentSerializer(serializers.ModelSerializer):
         return False
 
 class PostSerializer(serializers.ModelSerializer):
-    comment_set = NestedCommentSerializer(many=True, read_only=True)
+    comment_set = serializers.SerializerMethodField(method_name='get_root_comments')
     like_count = serializers.IntegerField(source='like_users.count', read_only=True)
     is_liked = serializers.SerializerMethodField(method_name='has_liked', read_only=True)
 
     class Meta:
         model = Post
-        fields = ('id', 'title', 'content', 'like_count', 'is_liked', 'comment_set', 'created_at', 'updated_at')
+        fields = fields = '__all__'
         read_only_fields = ('user', 'like_users')
 
     def has_liked(self, obj):
@@ -78,3 +78,8 @@ class PostSerializer(serializers.ModelSerializer):
         if request and request.user.is_authenticated:
             return obj.like_users.filter(id=request.user.id).exists()
         return False
+
+    def get_root_comments(self, obj):
+        root_comments = Comment.objects.filter(post=obj, parent__isnull=True)
+        serializer = NestedCommentSerializer(root_comments, many=True, context=self.context)
+        return serializer.data

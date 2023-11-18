@@ -4,6 +4,8 @@ import DetailView from '@/views/community/DetailView.vue'
 import CreateView from '@/views/community/CreateView.vue'
 import ModifyView from '@/views/community/ModifyView.vue'
 
+import ProfileView from '@/views/accounts/ProfileView.vue'
+import UpdateProfile from '@/components/posts/UpdateProfile.vue'
 import SignUpView from '@/views//accounts/SignUpView.vue'
 import LoginView from '@/views/accounts/LoginView.vue'
 import MapView from '@/views/map/MapView.vue'
@@ -72,6 +74,16 @@ const router = createRouter({
       path: '/DepositsDetail/:key',
       name: 'DepositsDetail',
       component: DepositsDetail
+    },
+    {
+      path: '/profile',
+      name: 'ProfileView',
+      component: ProfileView
+    },
+    {
+      path: '/updateprofile',
+      name: 'UpdateProfile',
+      component: UpdateProfile
     }
   ]
 })

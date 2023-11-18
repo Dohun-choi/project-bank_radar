@@ -1,14 +1,17 @@
 <template>
     <div>
       <div v-if="store.isLogin">
-        <p>환영합니다</p>
+        <p>{{store.profileInfo.nickname}} 님 환영합니다</p>
+        <div v-if="store.profileInfo.nickname === `unknown${store.profileInfo.id}`">
+          <p>회원정보를 입력하시겠어요?</p>
+          <button @click="updateProfile"> 회원정보 수정하기</button>
+        </div>
         <button @click="store.logout">로그아웃</button>
       </div>
       <div v-else>
         로그인이 필요합니다.
       </div>
-      <!-- 로컬스토리지 초기화 실험용 -->
-      <button @click="clearStorage">스토리지 초기화</button>
+    
       <nav>
         <RouterLink :to="{name: 'ArticleView'}">Posts</RouterLink>
         <br>
@@ -21,6 +24,8 @@
         <RouterLink :to="{name: 'ExchangeView'}">Exchange</RouterLink>
         <br> 
         <RouterLink :to="{name: 'FinanceView'}">Finance</RouterLink> 
+        <br> 
+        <RouterLink :to="{name: 'ProfileView'}">Profile</RouterLink> 
       </nav>
       <RouterView />
     </div>
@@ -28,12 +33,14 @@
 
 <script setup>
 import { useCounterStore } from './stores/counter';
-import { ref, computed, onMounted } from 'vue';
-import { RouterView, RouterLink } from 'vue-router'
+import { RouterView, RouterLink, useRouter } from 'vue-router'
 
+const router = useRouter()
 const store = useCounterStore()
 
-const clearStorage = () => localStorage.clear()
+const updateProfile = () => {
+    router.push({name: 'UpdateProfile'})
+}
 
 
 

@@ -16,7 +16,7 @@
           <td>{{ post.content}}</td>
           <td> {{ post.updated_at }}</td>
           <!-- 게시글 좋아요 -->
-          <td> 좋아요 수 : {{postLikeCount}}</td>
+          <td> 좋아요 수 : {{post.like_count}}</td>
         </tr>
       </tbody>
       <!-- 게시글 버튼 -->
@@ -24,19 +24,18 @@
       <button @click="deletePost">[DELETE]</button> |
       <button @click="moveModify">[MODIFY]</button> |
 
-      <button @click="postLike">{{ isPostLike ? '[좋아요 취소]' : '[좋아요]' }}</button>
+      <button @click="postLike">{{ post.is_liked ? '[좋아요 취소]' : '[좋아요]' }}</button>
 
     </div>
     <hr>
     </table>
-    
     <!-- 댓글관리 -->
-    <div v-for="(comment, index) in post.comment_set" :key="comment.id" :showModify="comment.id">
+    <div v-for="comment in post.comment_set" :key="comment.id" :showModify="comment.id">
       <div>
         <p>{{ comment.content }}</p>
-        <p>좋아요 수 : {{ commentLikeCounts[index].value }}</p>
-        <button @click="commentLike(comment.id, index)">
-          {{ commentLikes[index].value ? '[좋아요 취소]' : '[좋아요]' }}
+        <p>좋아요 수 : {{ comment.like_count }}</p>
+        <button @click="commentLike(comment.id, comment)">
+          {{ comment.is_liked ? '[좋아요 취소]' : '[좋아요]' }}
         </button>
 
         <!-- 댓글 수정 -->
@@ -48,7 +47,23 @@
           </form>
         </div>
         <button @click="comment.showModify = !comment.showModify">[mod]</button>
+        <!-- 댓글 삭제 -->
         <button @click="deleteComment(comment.id)">[del]</button>
+        
+        <!-- 대댓글 -->
+        <div v-for="children in comment.children" :key="children.id">
+          <p> 대댓글 : {{children.content }}</p>
+        </div>
+        
+        <div v-show="comment.showReComment">
+          <form @submit.prevent="createReComment(comment.id, comment)">
+            <label for="reComment">대댓글 달기</label>
+            <input type="text" id="reComment" v-model="reComment">
+            <input type="submit" value="작성">
+          </form>
+        </div>
+          <button @click="comment.showReComment = !comment.showReComment">[대댓글달기]</button>
+        
     </div>
     </div>
 
@@ -78,11 +93,10 @@ const post = ref('')
 
 const comment = ref('') // 
 const newContent = ref('') // 코멘트 수정
-const isPostLike = ref(false) // 게시글 좋아요
 
-const postLikeCount = ref('')
-const commentLikes = ref([]) // 각 댓글의 좋아요 여부 배열
-const commentLikeCounts = ref([]) // 각 댓글의 좋아요 수 배열
+const reComment = ref('') // 대댓글
+
+
 
 const log = () => {
   console.log(post.value)
@@ -95,16 +109,12 @@ onMounted(()=>{
 })
 .then((res)=>{
   post.value = res.data
-  // 코멘트 각각 showModify 추가
-  post.value.comment_set.forEach(e=>{e.showModify = ref(false)
-  //코멘트 좋아요 여부 확인
-  commentLikes.value.push(ref(e.like_users.includes(post.value.user)))
-        commentLikeCounts.value.push(ref(e.like_users.length))
+  // 코멘트 각각 showModify, showReComment 추가
+  post.value.comment_set.forEach(e=>{
+    e.showModify = ref(false)
+    e.showReComment = ref(false)
   })
   
-  // 게시글 좋아요 여부 확인
-  isPostLike.value = post.value.like_users.includes(post.value.user)
-  postLikeCount.value = post.value.like_count
     })
     .catch((err) => {
       console.log(err);
@@ -132,6 +142,29 @@ const deletePost = () => {
 // 수정 페이지로 이동
 const moveModify = () =>
   router.push({name: 'ModifyView'})
+
+/// 대댓글
+const createReComment = (commentId, comment) => {
+  axios({
+      method: 'POST',
+      url: `${store.API_URL}/api/v1/community/posts/${route.params.id}/comments/`,
+      data: {
+        content: reComment.value,
+        parent: commentId,
+      },
+      headers: {
+        Authorization: `Token ${store.token}`
+      }
+  })
+  .then((res)=>{
+    console.log('대댓글 성공', res.data)
+    comment.children.push(res.data)
+  })
+  .catch((err)=>{
+    console.log('대댓글 실패', err)
+  }) 
+}
+
 
 // 댓글 달기
 const createComment = () => {
@@ -204,17 +237,17 @@ const postLike = () => {
         }
     })
 .then((res)=>{
-    console.log('성공')
-    isPostLike.value = !isPostLike.value
-    postLikeCount.value = res.data.likeCount
+    console.log('게시글 좋아요 성공')
+    post.value.is_liked = res.data.is_liked
+    post.value.like_count = res.data.likeCount
 })
 .catch((err)=>{
-    console.log('실패', err)
+    console.log('게시글 좋아요 실패', err)
 }) 
 }
 
 // 댓글 좋아요
-const commentLike = (commentId, index) => {
+const commentLike = (commentId, comment) => {
   axios({
         method: 'POST',
         url: `${store.API_URL}/api/v1/community/comments/${commentId}/likes/`,
@@ -223,9 +256,11 @@ const commentLike = (commentId, index) => {
         }
     })
 .then((res)=>{
-      console.log('성공');
-      commentLikes.value[index] = ref(res.data.isLiked)
-      commentLikeCounts.value[index] = ref(res.data.likeCount)
+      console.log(comment)
+      console.log('댓글 좋아요 성공');
+      comment.is_liked = ref(res.data.isLiked)
+      comment.like_count = ref(res.data.likeCount)
+      console.log(comment)
 })
 .catch((err)=>{
     console.log('실패', err)
