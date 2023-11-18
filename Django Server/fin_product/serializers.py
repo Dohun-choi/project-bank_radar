@@ -37,7 +37,7 @@ class SavingOptionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = SavingOptions
         fields = '__all__'
-        read_only_fields = ('fin_prdt_cd',)
+        read_only_fields = ('fin_prdt_cd', 'max_saving_output')
 
 
 class GETDepositProductsSerializer(serializers.ModelSerializer):

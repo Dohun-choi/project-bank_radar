@@ -23,7 +23,13 @@ def user_info(request):
     
     elif request.method == 'PUT':
         profile = get_object_or_404(UserProfile, user=request.user)
-        serializer = UserProfileSerializer(profile,  data=request.data, partial=True)
+        updated_data = request.data.copy()
+        
+        for field, value in request.data.items():
+            if value is None:
+                updated_data[field] = getattr(profile, field)
+
+        serializer = UserProfileSerializer(profile,  data=updated_data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
