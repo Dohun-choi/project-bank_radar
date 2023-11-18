@@ -23,11 +23,15 @@ API_key = settings.API_KEY_FIN_PRD
 
 def update(D_or_S, productserializer, optionserializer, productmodel, optionmodel):
     url = f'http://finlife.fss.or.kr/finlifeapi/{D_or_S}ProductsSearch.json?auth={API_key}&topFinGrpNo=020000&pageNo=1'
-    response = requests.get(url).json()
+    
+    try:
+        response = requests.get(url).json()
+        if response.get('result').get('err_cd') != '000':
+            print(response.get('result').get('err_msg'))
+            return False, response.get('result').get('err_msg')
+    except:
+        return False, '금융감독원 OPEN API에서 응답을 받을 수 없거나 올바르지 않은 응답을 받았습니다.'
 
-    if response.get('result').get('err_cd') != '000':
-        print(response.get('result').get('err_msg'))
-        return False, response.get('result').get('err_msg')
 
     try:
         for lst in response.get('result').get('baseList'):

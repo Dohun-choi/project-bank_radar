@@ -15,14 +15,19 @@ API_ERROR = {2 : 'DATA코드 오류', 3 : '인증코드 오류', 4 : '일일제�
 @permission_classes([IsAuthenticatedOrReadOnly, IsAdminUser])
 def update_exchange_DB(request):
     url = f'https://www.koreaexim.go.kr/site/program/financial/exchangeJSON?authkey={API_key}&data=AP01'
-    response = requests.get(url).json()
-    if not response:
-        return Response({"detail": "환율 정보 갱신 실패"})
-    ExchangeInfo.objects.all().delete()
 
+    try:
+        response = requests.get(url).json()
+    except:
+        return Response({'detail': '한국수출입 은행 OPEN API에서 응답을 받을 수 없거나 올바르지 않은 응답을 받았습니다.'})
+    
+    if not response:
+        return Response({'detail':'비영업일의 데이터, 혹은 영업당일 11시 이전에 해당일의 데이터를 요청하여 데이터를 업데이트 할 수 없습니다.'})
+    
+    ExchangeInfo.objects.all().delete()
     for li in response:
         if li.get('result') != 1:
-            return Response({'detail': f'한국수출입 은행 OPEN API 오류 : {API_ERROR[li.get("result")]}'})
+            return Response({'detail': f'한국수출입 은행 OPEN API 요청 오류 : {API_ERROR[li.get("result")]}'})
         serializer = ExchangeSerializers(data=li)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
@@ -31,7 +36,7 @@ def update_exchange_DB(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticatedOrReadOnly])
+@permission_classes([IsAuthenticated])
 def exchange_from_DB(request):
     data = get_list_or_404(ExchangeInfo)
     serializer = ExchangeSerializers(data, many=True)

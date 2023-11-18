@@ -8,7 +8,7 @@ from django.shortcuts import get_list_or_404, get_object_or_404
 from django.db.models import Count
 
 from .models import Post, Comment
-from .serializers import PostListSerializer, PostSerializer, CommentSerializer
+from .serializers import PostListSerializer, PostSerializer, NestedCommentSerializer
 
 
 @api_view(['GET', 'POST'])
@@ -62,7 +62,7 @@ def post_detail(request, post_pk):
 @api_view(['POST'])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def create_comment(request, post_pk):
-    serializer = CommentSerializer(data=request.data, context={'request':request})
+    serializer = NestedCommentSerializer(data=request.data, context={'request':request})
     if serializer.is_valid(raise_exception=True):
         post = Post.objects.get(pk=post_pk)
         serializer.save(post=post, user=request.user)
@@ -87,7 +87,7 @@ def comment_detail(request, comment_pk):
         return Response(status=status.HTTP_204_NO_CONTENT)
     
     elif request.method == 'PUT':
-        serializer = CommentSerializer(comment, data=request.data, context={'request':request})
+        serializer = NestedCommentSerializer(comment, data=request.data, context={'request':request})
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)

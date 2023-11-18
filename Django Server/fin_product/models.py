@@ -59,4 +59,13 @@ class SavingOptions(models.Model):
     intr_rate_type_nm = models.CharField(null=True, max_length=100, default='알수 없음')        # 저축금리 유형명
     intr_rate = models.FloatField(null=True, default=-1)                                       # 저축금리
     intr_rate2 = models.FloatField(null=True, default=-1)                                      # 최고우대금리
-    save_trm = models.SmallIntegerField(null=True, default=-1)                                 # 저축기간(단위:개월)
+    save_trm = models.SmallIntegerField(null=True, default=0)                                 # 저축기간(단위:개월)
+    max_saving_output = models.BigIntegerField()
+
+
+    def save_max_saving_output(self):
+        self.max_saving_output = self.intr_rate * self.save_trm
+    
+    def save(self, *args, **kwargs):
+        self.save_max_saving_output()
+        super().save(*args, **kwargs)
