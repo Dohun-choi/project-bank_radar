@@ -10,8 +10,8 @@ from django.db.models.functions import Coalesce
 
 from .models import UserProfile, Travel
 from .serializers import UserProfileSerializer, TravelSerializer
-from fin_product.models import DepositProducts, DepositOptions, SavingProducts, SavingOptions
-from fin_product.serializers import GETDepositProductsSerializer, GETSavingProductsSerializer, DepositOptionsSerializer
+from fin_product.models import DepositOptions, SavingOptions
+from fin_product.serializers import DepositOptionsSerializer, GetSavingOptionsSerializer
 
 @api_view(['GET', 'PUT'])
 @permission_classes([IsAuthenticated])
@@ -98,29 +98,22 @@ def user_info(request):
 
 
 
-def get_top_products_with_options(product_model, options_model, group_type, user_profile):
+def get_top_products_with_options(options_model, group_type, user_profile):
     if group_type == 'likes':
-        top_products = get_list_or_404(
-            product_model.objects.annotate(
-                total_into_user=Coalesce(
-                    Sum(f'{options_model.lower()}_set__into_user'),
-                    Value(0)
-                )
-            ).order_by(
-                '-total_into_user', '-max_limit'
-            )[:10]
-        )
+        top_products = options_model.objects.annotate(
+        total_into_user=Coalesce(Sum('into_users'), Value(0))
+        ).order_by('-total_into_user', '-intr_rate')[:10]
     else:
         if getattr(user_profile, f'{group_type}_group') is None:
             return False
         top_products = get_list_or_404(
-            product_model.objects.annotate(
+            options_model.objects.annotate(
                 total_into_user=Coalesce(
-                    Sum(f'{options_model.lower()}_set__into_user'),
+                    Sum('into_users'),
                     Value(0)
                 )
             ).order_by(
-                '-total_into_user', '-max_limit'
+                '-total_into_user', '-intr_rate'
             )[:10]
         )
     return top_products
@@ -136,14 +129,11 @@ def deposits_recommend(request, group_type):
 
     requesting_user_profile = get_object_or_404(UserProfile, user=request.user)
 
-    top_10_liked_deposits = get_top_products_with_options(DepositProducts, DepositOptions, group_type, requesting_user_profile)
+    top_10_liked_deposits = get_top_products_with_options(DepositOptions, group_type, requesting_user_profile)
     if top_10_liked_deposits == False:
         return Response({'detail': f'{group_type}의 값을 입력하지 않았습니다. 프로필에서 {group_type}를 입력해주세요'})
-    serializer = GETDepositProductsSerializer(top_10_liked_deposits, many=True, context={'request': request})
+    serializer = DepositOptionsSerializer(top_10_liked_deposits, many=True, context={'request': request})
     return Response(serializer.data)
-
-
-###########################################################################################################################################
 
 
 @api_view(['GET'])
@@ -157,18 +147,22 @@ def savings_recommend(request, group_type):
     
     requesting_user_profile = get_object_or_404(UserProfile, user=request.user)
 
-    top_10_liked_savings = get_top_products_with_options(SavingProducts, SavingOptions, group_type, requesting_user_profile)
+    top_10_liked_savings = get_top_products_with_options(SavingOptions, group_type, requesting_user_profile)
     if top_10_liked_savings == False:
         return Response({'detail': f'{group_type}의 값을 입력하지 않았습니다. 프로필에서 {group_type}를 입력해주세요'})
-    serializer = GETSavingProductsSerializer(top_10_liked_savings, many=True, context={'request': request})
+    serializer = GetSavingOptionsSerializer(top_10_liked_savings, many=True, context={'request': request})
     return Response(serializer.data)
 
+
+
+###########################################################################################################################################
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def travel_recommand(request, save_period):
     today = date.today()
-    month = today + timedelta(days=30)
+
+    month = today.replace(day=1, month=today.month + 1).month
     date_after_a_month = f',{month},'
     next_recommend = f',{month+1},'
 
