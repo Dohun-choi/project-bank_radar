@@ -18,4 +18,15 @@ urlpatterns = [
     # GET: 단일 댓글 조회(안씀), DELETE: 댓글 삭제, PUT: 댓글 수정
     path('comments/<int:comment_pk>/likes/', views.comment_like),
     # POST: 댓글 좋아요/취소, 개수
+
+    path('notify/', views.get_notifies),
+    # GET: 내 게시글에 달린 댓글, 댓글에 달린 대댓글 목록 불러오기
+    # read 필드: 이 필드가 False인 알람이 불러와 진다.
+    # id_of_content 필드: 알람이 발생된 게시글 pk
+    # content 필드: 달린 댓글 또는 대댓글의 내용
+    # PUT : 모든 알람의 read 필드를 True로 반환
+    path('notify/<int:notify_pk>/', views.delete_notify),
+    # DELETE: 알람 삭제
+    path('isnotify/', views.is_notify),
+    # GET: 안 읽은 알람 개수 반환 {'notifies': 알람 개수} 형태
 ]

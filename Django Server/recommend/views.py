@@ -5,12 +5,12 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from django.shortcuts import get_list_or_404, get_object_or_404
-from django.db.models import Count, Value, Q
+from django.db.models import Count, Value, Q, Sum
 from django.db.models.functions import Coalesce
 
 from .models import UserProfile, Travel
 from .serializers import UserProfileSerializer, TravelSerializer
-from fin_product.models import DepositProducts, SavingProducts, SavingOptions
+from fin_product.models import DepositProducts, DepositOptions, SavingProducts, SavingOptions
 from fin_product.serializers import GETDepositProductsSerializer, GETSavingProductsSerializer, DepositOptionsSerializer
 
 @api_view(['GET', 'PUT'])
@@ -35,13 +35,79 @@ def user_info(request):
             return Response(serializer.data)
 
 
-def get_top_products(product_model, group_type, user_profile):
+# def get_top_products(product_model, group_type, user_profile):
+#     if group_type == 'likes':
+#         top_products = get_list_or_404(
+#             product_model.objects.annotate(
+#                 num_likes=Count('like_users')
+#             ).order_by(
+#                 '-num_likes', '-max_limit'
+#             )[:10]
+#         )
+#     else:
+#         if getattr(user_profile, f'{group_type}_group') is None:
+#             return False
+#         top_products = get_list_or_404(
+#             product_model.objects.annotate(
+#                 num_likes=Coalesce(
+#                     Count('like_users', filter=Q(
+#                         **{f"like_users__userprofile__{group_type}_group": getattr(user_profile, f'{group_type}_group')}
+#                     )),
+#                     Value(0)
+#                 )
+#             ).order_by(
+#                 '-num_likes', '-max_limit'
+#             )[:10]
+#         )
+#     return top_products
+
+# @api_view(['GET'])
+# @permission_classes([IsAuthenticatedOrReadOnly])
+# def deposits_recommend(request, group_type):
+#     if group_type not in {'age', 'monthly_income', 'assets', 'likes'}:
+#         return Response({'error': 'Invalid group_type'})
+    
+#     if group_type != 'likes' and IsAuthenticated:
+#         return Response({'detail': '회원 정보를 기반으로 추천하는 서비스는 로그인이 필요합니다.'})
+
+#     requesting_user_profile = get_object_or_404(UserProfile, user=request.user)
+
+#     top_10_liked_deposits = get_top_products(DepositProducts, group_type, requesting_user_profile)
+#     if top_10_liked_deposits == False:
+#         return Response({'detail': f'{group_type}의 값을 입력하지 않았습니다. 프로필에서 {group_type}를 입력해주세요'})
+#     serializer = GETDepositProductsSerializer(top_10_liked_deposits, many=True, context={'request': request})
+#     return Response(serializer.data)
+
+# @api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+# def savings_recommend(request, group_type):
+#     if group_type not in {'age', 'monthly_income', 'assets', 'likes'}:
+#         return Response({'error': 'Invalid group_type'})
+    
+#     if group_type != 'likes' and IsAuthenticated:
+#         return Response({'detail': '회원 정보를 기반으로 추천하는 서비스는 로그인이 필요합니다.'})
+    
+#     requesting_user_profile = get_object_or_404(UserProfile, user=request.user)
+
+#     if top_10_liked_deposits == False:
+#         return Response({'detail': f'{group_type}의 값을 입력하지 않았습니다. 프로필에서 {group_type}를 입력해주세요'})
+
+#     top_10_liked_savings = get_top_products(SavingProducts, group_type, requesting_user_profile)
+#     serializer = GETSavingProductsSerializer(top_10_liked_savings, many=True, context={'request': request})
+#     return Response(serializer.data)
+
+
+
+def get_top_products_with_options(product_model, options_model, group_type, user_profile):
     if group_type == 'likes':
         top_products = get_list_or_404(
             product_model.objects.annotate(
-                num_likes=Count('like_users')
+                total_into_user=Coalesce(
+                    Sum(f'{options_model.lower()}_set__into_user'),
+                    Value(0)
+                )
             ).order_by(
-                '-num_likes', '-max_limit'
+                '-total_into_user', '-max_limit'
             )[:10]
         )
     else:
@@ -49,14 +115,12 @@ def get_top_products(product_model, group_type, user_profile):
             return False
         top_products = get_list_or_404(
             product_model.objects.annotate(
-                num_likes=Coalesce(
-                    Count('like_users', filter=Q(
-                        **{f"like_users__userprofile__{group_type}_group": getattr(user_profile, f'{group_type}_group')}
-                    )),
+                total_into_user=Coalesce(
+                    Sum(f'{options_model.lower()}_set__into_user'),
                     Value(0)
                 )
             ).order_by(
-                '-num_likes', '-max_limit'
+                '-total_into_user', '-max_limit'
             )[:10]
         )
     return top_products
@@ -72,20 +136,30 @@ def deposits_recommend(request, group_type):
 
     requesting_user_profile = get_object_or_404(UserProfile, user=request.user)
 
-    top_10_liked_deposits = get_top_products(DepositProducts, group_type, requesting_user_profile)
+    top_10_liked_deposits = get_top_products_with_options(DepositProducts, DepositOptions, group_type, requesting_user_profile)
     if top_10_liked_deposits == False:
         return Response({'detail': f'{group_type}의 값을 입력하지 않았습니다. 프로필에서 {group_type}를 입력해주세요'})
     serializer = GETDepositProductsSerializer(top_10_liked_deposits, many=True, context={'request': request})
     return Response(serializer.data)
+
+
+###########################################################################################################################################
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def savings_recommend(request, group_type):
     if group_type not in {'age', 'monthly_income', 'assets', 'likes'}:
         return Response({'error': 'Invalid group_type'})
-
+    
+    if group_type != 'likes' and IsAuthenticated:
+        return Response({'detail': '회원 정보를 기반으로 추천하는 서비스는 로그인이 필요합니다.'})
+    
     requesting_user_profile = get_object_or_404(UserProfile, user=request.user)
-    top_10_liked_savings = get_top_products(SavingProducts, group_type, requesting_user_profile)
+
+    top_10_liked_savings = get_top_products_with_options(SavingProducts, SavingOptions, group_type, requesting_user_profile)
+    if top_10_liked_savings == False:
+        return Response({'detail': f'{group_type}의 값을 입력하지 않았습니다. 프로필에서 {group_type}를 입력해주세요'})
     serializer = GETSavingProductsSerializer(top_10_liked_savings, many=True, context={'request': request})
     return Response(serializer.data)
 
@@ -111,7 +185,7 @@ def travel_recommand(request, save_period):
     )
 
     if not recommend_travel_place.exists():
-        return Response({'detail' : '선택 기간에 이후에 적합한 여행지가 존재하기 안습니다.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'detail' : '선택 기간에 이후에 적합한 여행지가 존재하지 않습니다.'}, status=status.HTTP_404_NOT_FOUND)
     
     serializer = TravelSerializer(recommend_travel_place, many=TravelSerializer)
     return Response(serializer.data)

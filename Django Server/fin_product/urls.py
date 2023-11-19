@@ -11,8 +11,8 @@ urlpatterns = [
     # 예금 토론(댓글) 가져오기
     path('savings/debate/<str:fin_prdt_cd>/', views.saving_debate),
     # 적금 토론(댓글) 가져오기
-    path('deposits/<str:fin_prdt_cd>/', views.deposit_likes),
+    path('deposits/<int:option_pk>/', views.deposit_intos),
     # 예금 좋아요
-    path('savings/<str:fin_prdt_cd>/', views.saving_likes),
+    path('savings/<int:option_pk>/', views.saving_intos),
     # 적금 좋아요
 ]

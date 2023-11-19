@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Post, Comment
+from .models import Post, Comment, Notify
 from mptt.utils import tree_item_iterator
 
 class PostListSerializer(serializers.ModelSerializer):
@@ -83,3 +83,10 @@ class PostSerializer(serializers.ModelSerializer):
         root_comments = Comment.objects.filter(post=obj, parent__isnull=True)
         serializer = NestedCommentSerializer(root_comments, many=True, context=self.context)
         return serializer.data
+    
+
+class NotifySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notify
+        fields = '__all__'
+        exclude = ('user',)
