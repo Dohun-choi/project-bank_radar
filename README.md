@@ -12,8 +12,10 @@ Bank Radar는 사용자의 여행 욕구를 바탕으로 예금과 적금에 대
 
 인기 있는 저축 상품을 찾아 추천해 줄 뿐만 아니라, 이를 사용자의 여행 열망과 통합하는 데 중점을 두고 있습니다.
 
-<div style="display: flex; align-items: center;">   <img src="images/BankRadar_favicon.png" width="300" alt="Bank radar favicon image" style="float: left; margin-right: 20px;">   <p>"Bank Radar의 로고예요. <br/><br/>
-당신을 위한 저축 상품을 찾고 있는 레이더의 모습을 형상화하였어요. <br/><br/> 이 레이더는 당신의 마음에 활력을 불어넣어줄 여행지까지 찾아준답니다."</p> </div>
+<p align="center"> <img src="Images/BankRadar_favicon.png" width="300" alt="Bank radar favicon image" style="float: left; margin-right: 20px;"></p>
+<p align="center">
+"Bank Radar의 로고예요. <br/><br/>
+당신을 위한 저축 상품을 찾고 있는 레이더의 모습을 형상화하였어요. <br/><br/> 이 레이더는 당신의 마음에 활력을 불어넣어줄 여행지까지 찾아준답니다." </p>
 
 지갑의 활력 + 마음의 활력 좋다 조아
 
