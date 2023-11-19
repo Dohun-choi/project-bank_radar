@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Post, Comment
+from .models import Post, Comment, Notify
 from mptt.utils import tree_item_iterator
 
 class PostListSerializer(serializers.ModelSerializer):
@@ -49,8 +49,8 @@ class NestedCommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ('id', 'post', 'parent', 'content', 'like_count', 'is_liked', 'children', 'created_at', 'updated_at')
-        read_only_fields = ('post', 'user', 'like_users')
+        fields = fields = '__all__'
+        read_only_fields = ('user', 'like_users', 'post')
 
     def get_children(self, obj):
         children = Comment.objects.filter(post=obj.post_id, parent=obj.id)
@@ -83,3 +83,10 @@ class PostSerializer(serializers.ModelSerializer):
         root_comments = Comment.objects.filter(post=obj, parent__isnull=True)
         serializer = NestedCommentSerializer(root_comments, many=True, context=self.context)
         return serializer.data
+    
+
+class NotifySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notify
+        fields = '__all__'
+        exclude = ('user',)

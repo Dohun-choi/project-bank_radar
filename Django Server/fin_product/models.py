@@ -13,7 +13,7 @@ class DepositProducts(models.Model):
     join_way = models.TextField(null=True, default='알수 없음')       # 가입 방법
     max_limit = models.IntegerField(null=True, default='-1')         # 최고한도
     spcl_cnd = models.TextField(null=True, default='알수 없음')       # 우대 조건
-    like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_deposits')
+    # into_user = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='into_deposits') product가 아닌 options에 가입 정보 저장
 
 
 class DepositDebate(models.Model):
@@ -24,12 +24,13 @@ class DepositDebate(models.Model):
 
 
 class DepositOptions(models.Model):
-    fin_prdt_cd = models.ForeignKey(DepositProducts, related_name='options', on_delete=models.CASCADE)                  # 금융 상품 코드
+    fin_prdt_cd = models.ForeignKey(DepositProducts, related_name='options', on_delete=models.CASCADE)# 금융 상품 코드
     intr_rate_type = models.TextField(null=True, default='알수 없음')                           # 저축 금리 유형
     intr_rate_type_nm = models.CharField(null=True, max_length=100, default='알수 없음')        # 저축금리 유형명
     intr_rate = models.FloatField(null=True, default=-1)                                       # 저축금리
     intr_rate2 = models.FloatField(null=True, default=-1)                                      # 최고우대금리
     save_trm = models.SmallIntegerField(null=True, default=-1)                                 # 저축기간(단위:개월)
+    into_user = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='into_deposit_options')
 
 
 class SavingProducts(models.Model):
@@ -43,7 +44,7 @@ class SavingProducts(models.Model):
     join_way = models.TextField(null=True, default='알수 없음')       # 가입 방법
     max_limit = models.IntegerField(null=True, default=-1)   # 최고한도
     spcl_cnd = models.TextField(null=True, default='알수 없음')       # 우대 조건
-    like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_savings')
+    # into_user = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='into_savings') product가 아닌 options에 가입 정보 저장
 
 
 class SavingDebate(models.Model):
@@ -60,11 +61,12 @@ class SavingOptions(models.Model):
     intr_rate = models.FloatField(null=True, default=-1)                                       # 저축금리
     intr_rate2 = models.FloatField(null=True, default=-1)                                      # 최고우대금리
     save_trm = models.SmallIntegerField(null=True, default=0)                                 # 저축기간(단위:개월)
-    max_saving_output = models.BigIntegerField(default=0)
+    max_saving_output = models.FloatField(default=0)
+    into_user = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='into_saving_options')
 
 
     def save_max_saving_output(self):
-        self.max_saving_output = self.intr_rate * self.save_trm
+        self.max_saving_output = self.intr_rate * self.fin_prdt_cd.max_limit * self.save_trm
     
     def save(self, *args, **kwargs):
         self.save_max_saving_output()

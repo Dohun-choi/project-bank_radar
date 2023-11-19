@@ -53,7 +53,7 @@ def update(D_or_S, productserializer, optionserializer, productmodel, optionmode
                 fin_prdt_cd = productmodel.objects.get(fin_prdt_cd=lst.get('fin_prdt_cd'))
                 option_serializer.save(fin_prdt_cd=fin_prdt_cd)
 
-        return True, True
+        return [True]
     except:
         return False, '알 수 없는 에러'
 
@@ -83,17 +83,17 @@ def saving_from_DB(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticatedOrReadOnly])
-def deposit_likes(request, fin_prdt_cd):
-    deposit = get_object_or_404(DepositProducts, pk=fin_prdt_cd)
+def deposit_intos(request, option_pk):
+    deposit = get_object_or_404(DepositOptions, pk=option_pk)
 
-    is_liked = deposit.like_users.filter(pk=request.user.pk).exists()
+    is_liked = deposit.into_user.filter(pk=request.user.pk).exists()
 
     if is_liked:
-        deposit.like_users.remove(request.user)
+        deposit.into_user.remove(request.user)
     else:
-        deposit.like_users.add(request.user)
+        deposit.into_user.add(request.user)
             
-    like_count = deposit.like_users.aggregate(count=Count('id'))['count']
+    like_count = deposit.into_user.aggregate(count=Count('id'))['count']
 
     data = {
         'isLiked': not is_liked,
@@ -104,17 +104,17 @@ def deposit_likes(request, fin_prdt_cd):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticatedOrReadOnly])
-def saving_likes(request, fin_prdt_cd):
-    saving = get_object_or_404(SavingProducts, pk=fin_prdt_cd)
+def saving_intos(request, option_pk):
+    saving = get_object_or_404(SavingOptions, pk=option_pk)
 
-    is_liked = saving.like_users.filter(pk=request.user.pk).exists()
+    is_liked = saving.into_user.filter(pk=request.user.pk).exists()
 
     if is_liked:
-        saving.like_users.remove(request.user)
+        saving.into_user.remove(request.user)
     else:
-        saving.like_users.add(request.user)
+        saving.into_user.add(request.user)
             
-    like_count = saving.like_users.aggregate(count=Count('id'))['count']
+    like_count = saving.into_user.aggregate(count=Count('id'))['count']
 
     data = {
         'isLiked': not is_liked,

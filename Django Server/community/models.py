@@ -32,3 +32,10 @@ class Comment(MPTTModel):
 
     class MPTTMeta:
         order_insertion_by = ['created_at']
+
+
+class Notify(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    content = models.TextField()
+    id_of_content = models.IntegerField()
+    read = models.BooleanField(default=False)

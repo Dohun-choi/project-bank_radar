@@ -10,8 +10,8 @@ class UserProfile(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     nickname = models.CharField(max_length=15, unique=True)
     birth = models.DateTimeField(null=True, blank=True)
-    monthly_income = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    assets = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True) 
+    monthly_income = models.DecimalField(max_digits=10, decimal_places=0, null=True, blank=True)
+    assets = models.DecimalField(max_digits=15, decimal_places=0, null=True, blank=True) 
 
     age = models.IntegerField(null=True, blank=True)
     age_group = models.IntegerField(null=True, blank=True)

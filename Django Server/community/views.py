@@ -3,13 +3,21 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.decorators import permission_classes
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from django.shortcuts import get_list_or_404, get_object_or_404
 from django.db.models import Count
+from accounts.models import User
 
-from .models import Post, Comment
-from .serializers import PostListSerializer, PostSerializer, NestedCommentSerializer
+from .models import Post, Comment, Notify
+from .serializers import PostListSerializer, PostSerializer, NestedCommentSerializer, NotifySerializer
 
+
+
+def create_notify(post_user, post_pk, parent_user, data):
+    print(post_user, post_pk, parent_user, data)
+    Notify.objects.create(user=post_user, content=data, id_of_content=post_pk)
+    if parent_user is not None:
+        Notify.objects.create(user=parent_user, content=data, id_of_content=post_pk)
 
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticatedOrReadOnly])
@@ -60,17 +68,23 @@ def post_detail(request, post_pk):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticatedOrReadOnly])
+@permission_classes([IsAuthenticated])
 def create_comment(request, post_pk):
     serializer = NestedCommentSerializer(data=request.data, context={'request':request})
     if serializer.is_valid(raise_exception=True):
         post = Post.objects.get(pk=post_pk)
         serializer.save(post=post, user=request.user)
+        if request.data['parent'] is None:
+            parent_user = None
+        else:
+            comment = get_object_or_404(Comment, pk=request.data['parent'])
+            parent_user = get_object_or_404(User, pk=comment.pk)
+        create_notify(post.user, post_pk, parent_user, request.data['content'])
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 @api_view(['GET', 'DELETE', 'PUT'])
-@permission_classes([IsAuthenticatedOrReadOnly])
+@permission_classes([IsAuthenticated])
 def comment_detail(request, comment_pk):
     comment = get_object_or_404(Comment, pk=comment_pk)
 
@@ -114,7 +128,7 @@ def post_like(request, post_pk):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticatedOrReadOnly])
+@permission_classes([IsAuthenticated])
 def comment_like(request, comment_pk):
     comment = get_object_or_404(Comment, pk=comment_pk)
 
@@ -130,3 +144,34 @@ def comment_like(request, comment_pk):
         'likeCount': like_count
     }
     return Response(data)
+
+
+@api_view(['GET', 'PUT'])
+@permission_classes([IsAuthenticated])
+def get_notifies(request):
+    notifies = get_list_or_404(Notify, user=request.user)
+    if request.method == 'GET':     
+        serializer = NotifySerializer(notifies, many=True)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+        return Response(serializer.data)
+    
+    elif request.method == 'PUT':
+        for notify in notifies:
+            notify.read = True
+            notify.save()
+        return Response(status=status.HTTP_202_ACCEPTED)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def is_notify(request):
+    notifies = Notify.objects.filter(user=request.user, read=False).count()
+    return Response({'notifies': notifies})
+
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_notify(request, notify_pk):
+    notify = get_object_or_404(Notify, pk=notify_pk)
+    notify.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
