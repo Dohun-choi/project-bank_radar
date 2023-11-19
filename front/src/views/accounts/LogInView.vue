@@ -2,17 +2,8 @@
   <div>
     <h1>Login</h1>
     <form @submit.prevent="logIn">
-      
-      <div>
-        <label for="ID">ID</label>
-      <input type="text" id="ID" v-model.trim="username">
-      </div>
-      
-      <div>
-        <label for="">PASSWORD</label>
-      <input type="password" id="PASSWORD" v-model.trim="password">
-      </div>
-
+      <input type="text" v-model.trim="username">
+      <input type="password" v-model.trim="password">
       <input type="submit">
     </form>
   </div>
