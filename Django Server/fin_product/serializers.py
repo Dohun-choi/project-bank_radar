@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.db.models import Count
 from .models import (
     DepositProducts, DepositOptions,
     SavingProducts, SavingOptions,
@@ -9,72 +10,49 @@ class DepositProductsSerializer(serializers.ModelSerializer):
     class Meta:
         model = DepositProducts
         fields = '__all__'
-        read_only_fields = ('like_users',)
 
 class DepositOptionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = DepositOptions
         fields = '__all__'
-        read_only_fields = ('fin_prdt_cd',)
+        read_only_fields = ('fin_prdt_cd', 'into_users',)
 
 
 class SavingProductsSerializer(serializers.ModelSerializer):
-    like_count = serializers.IntegerField(source='like_users.count', read_only=True)
-    is_liked = serializers.SerializerMethodField(method_name='has_liked', read_only=True)
-
     class Meta:
         model = SavingProducts
         fields = '__all__'
-        read_only_fields = ('like_users',)
 
-    def has_liked(self, obj):
-        request = self.context.get('request')
-        if request and request.user.is_authenticated:
-            return obj.like_users.filter(id=request.user.id).exists()
-        return False
 
 class SavingOptionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = SavingOptions
         fields = '__all__'
-        read_only_fields = ('fin_prdt_cd', 'max_saving_output')
+        read_only_fields = ('fin_prdt_cd', 'into_users', 'max_saving_output', )
 
 
 class GETDepositProductsSerializer(serializers.ModelSerializer):
-    options = DepositOptionsSerializer(many=True, read_only=True)
-    like_count = serializers.IntegerField(source='like_users.count', read_only=True)
-    is_liked = serializers.SerializerMethodField(method_name='has_liked', read_only=True)
+    into_count = serializers.SerializerMethodField(method_name='get_into_count', read_only=True)
 
     class Meta:
         model = DepositProducts
         fields = '__all__'
-        read_only_fields = ('like_users',)
-    
-        
-    def has_liked(self, obj):
-        request = self.context.get('request')
-        print(self.context)
-        if request and request.user.is_authenticated:
-            return obj.like_users.filter(id=request.user.id).exists()
-        return False
+
+    def get_into_count(self, obj):
+        return DepositOptions.objects.filter(fin_prdt_cd=obj).aggregate(count=Count('into_users'))['count']
+
 
 
 class GETSavingProductsSerializer(serializers.ModelSerializer):
-    options = SavingOptionsSerializer(many=True, read_only=True)
-    like_count = serializers.IntegerField(source='like_users.count', read_only=True)
-    is_liked = serializers.SerializerMethodField(method_name='has_liked', read_only=True)
+    into_count = serializers.SerializerMethodField(method_name='get_into_count', read_only=True)
 
     class Meta:
-        model = DepositProducts
+        model = SavingProducts
         fields = '__all__'
-        read_only_fields = ('like_users',)
-    
-    def has_liked(self, obj):
-        request = self.context.get('request')
-        print(self.context)
-        if request and request.user.is_authenticated:
-            return obj.like_users.filter(id=request.user.id).exists()
-        return False
+
+    def get_into_count(self, obj):
+        return SavingOptions.objects.filter(fin_prdt_cd=obj).aggregate(count=Count('into_users'))['count']
+
 
 
 class DepositDebatesSerializer(serializers.ModelSerializer):
@@ -89,3 +67,35 @@ class SavingDebatesSerializer(serializers.ModelSerializer):
         model = SavingDebate
         fields = '__all__'
         read_only_fields = ('user', 'fin_prdt_cd')
+
+
+class GetSavingOptionsSerializer(serializers.ModelSerializer):
+    into_count = serializers.IntegerField(source='into_users.count', read_only=True)
+    is_into = serializers.SerializerMethodField(method_name='is_joined', read_only=True)
+
+    class Meta:
+        model = SavingOptions
+        fields = '__all__'
+        read_only_fields = ('fin_prdt_cd', 'into_users', 'max_saving_output', )
+
+    def is_joined(self, obj):
+        request = self.context.get('request')
+        if request:
+            return obj.into_users.filter(id=request.user.id).exists()
+        return False
+
+
+class GETDepositOptionsSerializer(serializers.ModelSerializer):
+    into_count = serializers.IntegerField(source='into_users.count', read_only=True)
+    is_into = serializers.SerializerMethodField(method_name='is_joined', read_only=True)
+
+    class Meta:
+        model = DepositOptions
+        fields = '__all__'
+        read_only_fields = ('fin_prdt_cd', 'into_users', )
+
+    def is_joined(self, obj):
+        request = self.context.get('request')
+        if request:
+            return obj.into_users.filter(id=request.user.id).exists()
+        return False

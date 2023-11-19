@@ -6,7 +6,8 @@ urlpatterns = [
      # DB에서 가져오기
     path('deposits/', views.deposit_from_DB),
     path('savings/', views.saving_from_DB),
-    # option 키에 옵션을 담아 함께 가져온다.
+    path('options/deposits/<str:fin_prdt_cd>/', views.deposit_options),
+    path('options/savings/<str:fin_prdt_cd>/', views.saving_options),
     path('deposits/debate/<str:fin_prdt_cd>/', views.deposit_debate),
     # 예금 토론(댓글) 가져오기
     path('savings/debate/<str:fin_prdt_cd>/', views.saving_debate),

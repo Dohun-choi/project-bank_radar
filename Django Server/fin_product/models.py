@@ -30,7 +30,7 @@ class DepositOptions(models.Model):
     intr_rate = models.FloatField(null=True, default=-1)                                       # 저축금리
     intr_rate2 = models.FloatField(null=True, default=-1)                                      # 최고우대금리
     save_trm = models.SmallIntegerField(null=True, default=-1)                                 # 저축기간(단위:개월)
-    into_user = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='into_deposit_options')
+    into_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='into_deposit_options')
 
 
 class SavingProducts(models.Model):
@@ -62,11 +62,11 @@ class SavingOptions(models.Model):
     intr_rate2 = models.FloatField(null=True, default=-1)                                      # 최고우대금리
     save_trm = models.SmallIntegerField(null=True, default=0)                                 # 저축기간(단위:개월)
     max_saving_output = models.FloatField(default=0)
-    into_user = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='into_saving_options')
+    into_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='into_saving_options')
 
 
     def save_max_saving_output(self):
-        self.max_saving_output = self.intr_rate * self.fin_prdt_cd.max_limit * self.save_trm
+        self.max_saving_output = (0 if self.intr_rate is None else self.intr_rate) * (0 if self.fin_prdt_cd.max_limit is None else self.fin_prdt_cd.max_limit) * (0 if self.save_trm is None else self.save_trm)
     
     def save(self, *args, **kwargs):
         self.save_max_saving_output()

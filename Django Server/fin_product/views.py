@@ -16,7 +16,8 @@ from .serializers import (
     DepositProductsSerializer, DepositOptionsSerializer,
     SavingProductsSerializer, SavingOptionsSerializer,
     GETDepositProductsSerializer, GETSavingProductsSerializer,
-    DepositDebatesSerializer, SavingDebatesSerializer
+    DepositDebatesSerializer, SavingDebatesSerializer,
+    GETDepositOptionsSerializer, GetSavingOptionsSerializer
     )
 API_key = settings.API_KEY_FIN_PRD
 
@@ -33,29 +34,29 @@ def update(D_or_S, productserializer, optionserializer, productmodel, optionmode
         return False, '금융감독원 OPEN API에서 응답을 받을 수 없거나 올바르지 않은 응답을 받았습니다.'
 
 
-    try:
-        for lst in response.get('result').get('baseList'):
-            fin_prdt_cd = lst.get('fin_prdt_cd')
-            
-            try:
-                product = productmodel.objects.get(fin_prdt_cd=fin_prdt_cd)
-                product_serializer = productserializer(product, data=lst)
-            except productmodel.DoesNotExist:
-                product_serializer = productserializer(data=lst)
+    # try:
+    for lst in response.get('result').get('baseList'):
+        fin_prdt_cd = lst.get('fin_prdt_cd')
+        
+        try:
+            product = productmodel.objects.get(fin_prdt_cd=fin_prdt_cd)
+            product_serializer = productserializer(product, data=lst)
+        except productmodel.DoesNotExist:
+            product_serializer = productserializer(data=lst)
 
-            if product_serializer.is_valid(raise_exception=True):
-                product_serializer.save()
+        if product_serializer.is_valid(raise_exception=True):
+            product_serializer.save()
 
-        optionmodel.objects.all().delete()
-        for lst in response.get('result').get('optionList'):
-            option_serializer = optionserializer(data=lst)
-            if option_serializer.is_valid(raise_exception=True):
-                fin_prdt_cd = productmodel.objects.get(fin_prdt_cd=lst.get('fin_prdt_cd'))
-                option_serializer.save(fin_prdt_cd=fin_prdt_cd)
+    optionmodel.objects.all().delete()
+    for lst in response.get('result').get('optionList'):
+        option_serializer = optionserializer(data=lst)
+        if option_serializer.is_valid(raise_exception=True):
+            fin_prdt_cd = productmodel.objects.get(fin_prdt_cd=lst.get('fin_prdt_cd'))
+            option_serializer.save(fin_prdt_cd=fin_prdt_cd)
 
-        return [True]
-    except:
-        return False, '알 수 없는 에러'
+    return [True]
+    # except:
+    #     return False, '알 수 없는 에러'
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticatedOrReadOnly, IsAdminUser])
@@ -81,19 +82,36 @@ def saving_from_DB(request):
     return Response(serializer.data)
 
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def deposit_options(request, fin_prdt_cd):
+    product = get_object_or_404(DepositProducts, fin_prdt_cd=fin_prdt_cd)
+    options = get_list_or_404(DepositOptions, fin_prdt_cd=product)
+    serializer = GETDepositOptionsSerializer(options, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def saving_options(request, fin_prdt_cd):
+    product = get_object_or_404(SavingProducts, fin_prdt_cd=fin_prdt_cd)
+    options = get_list_or_404(SavingOptions, fin_prdt_cd=product)
+    serializer = GetSavingOptionsSerializer(options, many=True, context={'request':request})
+    return Response(serializer.data)
+
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def deposit_intos(request, option_pk):
     deposit = get_object_or_404(DepositOptions, pk=option_pk)
 
-    is_liked = deposit.into_user.filter(pk=request.user.pk).exists()
+    is_liked = deposit.into_users.filter(pk=request.user.pk).exists()
 
     if is_liked:
-        deposit.into_user.remove(request.user)
+        deposit.into_users.remove(request.user)
     else:
-        deposit.into_user.add(request.user)
+        deposit.into_users.add(request.user)
             
-    like_count = deposit.into_user.aggregate(count=Count('id'))['count']
+    like_count = deposit.into_users.aggregate(count=Count('id'))['count']
 
     data = {
         'isLiked': not is_liked,
@@ -107,14 +125,14 @@ def deposit_intos(request, option_pk):
 def saving_intos(request, option_pk):
     saving = get_object_or_404(SavingOptions, pk=option_pk)
 
-    is_liked = saving.into_user.filter(pk=request.user.pk).exists()
+    is_liked = saving.into_users.filter(pk=request.user.pk).exists()
 
     if is_liked:
-        saving.into_user.remove(request.user)
+        saving.into_users.remove(request.user)
     else:
-        saving.into_user.add(request.user)
+        saving.into_users.add(request.user)
             
-    like_count = saving.into_user.aggregate(count=Count('id'))['count']
+    like_count = saving.into_users.aggregate(count=Count('id'))['count']
 
     data = {
         'isLiked': not is_liked,
