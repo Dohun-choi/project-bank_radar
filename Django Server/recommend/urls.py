@@ -8,6 +8,7 @@ urlpatterns = [
     # group_type: age, monthly_income, assets, likes
     path('savings/<str:group_type>/', views.savings_recommend),
 
+    path('travel/', views.get_country),
     path('travel/<int:save_period>/', views.travel_recommand),
     # GET : 저축 기간에 따른 여행지 추천
     path('teravel/<str:country>/', views.get_saving_for_travel)

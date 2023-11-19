@@ -18,8 +18,8 @@ def update_exchange_DB(request):
 
     try:
         response = requests.get(url).json()
-    except:
-        return Response({'detail': '한국수출입 은행 OPEN API에서 응답을 받을 수 없거나 올바르지 않은 응답을 받았습니다.'})
+    except Exception as e:
+        return Response({'detail': ['한국수출입 은행 OPEN API에서 응답을 받을 수 없거나 올바르지 않은 응답을 받았습니다.', f'에러 내용: {e}']})
     
     if not response:
         return Response({'detail':'비영업일의 데이터, 혹은 영업당일 11시 이전에 해당일의 데이터를 요청하여 데이터를 업데이트 할 수 없습니다.'})

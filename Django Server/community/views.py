@@ -146,21 +146,17 @@ def comment_like(request, comment_pk):
     return Response(data)
 
 
-@api_view(['GET', 'PUT'])
+@api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def get_notifies(request):
     notifies = get_list_or_404(Notify, user=request.user)
-    if request.method == 'GET':     
-        serializer = NotifySerializer(notifies, many=True)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-        return Response(serializer.data)
-    
-    elif request.method == 'PUT':
-        for notify in notifies:
+    for notify in notifies:
+        if not notifies.read:
             notify.read = True
             notify.save()
-        return Response(status=status.HTTP_202_ACCEPTED)
+    serializer = NotifySerializer(notifies, many=True)
+    return Response(serializer.data)
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

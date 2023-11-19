@@ -3,6 +3,7 @@ from rest_framework import status
 import requests
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.db.models import Count
 
@@ -30,33 +31,42 @@ def update(D_or_S, productserializer, optionserializer, productmodel, optionmode
         if response.get('result').get('err_cd') != '000':
             print(response.get('result').get('err_msg'))
             return False, response.get('result').get('err_msg')
-    except:
-        return False, '금융감독원 OPEN API에서 응답을 받을 수 없거나 올바르지 않은 응답을 받았습니다.'
+    except Exception as e:
+        return False, ['금융감독원 OPEN API에서 응답을 받을 수 없거나 올바르지 않은 응답을 받았습니다.', e]
 
+    try:
+        for lst in response.get('result').get('baseList'):
+            fin_prdt_cd = lst.get('fin_prdt_cd')
+            
+            try:
+                product = productmodel.objects.get(fin_prdt_cd=fin_prdt_cd)
+                product_serializer = productserializer(product, data=lst)
+            except ObjectDoesNotExist:
+                product_serializer = productserializer(data=lst)
+            except Exception as e:
+                return [False, e]
 
-    # try:
-    for lst in response.get('result').get('baseList'):
-        fin_prdt_cd = lst.get('fin_prdt_cd')
-        
-        try:
-            product = productmodel.objects.get(fin_prdt_cd=fin_prdt_cd)
-            product_serializer = productserializer(product, data=lst)
-        except productmodel.DoesNotExist:
-            product_serializer = productserializer(data=lst)
+            if product_serializer.is_valid(raise_exception=True):
+                product_serializer.save()
 
-        if product_serializer.is_valid(raise_exception=True):
-            product_serializer.save()
-
-    optionmodel.objects.all().delete()
-    for lst in response.get('result').get('optionList'):
-        option_serializer = optionserializer(data=lst)
-        if option_serializer.is_valid(raise_exception=True):
+        optionmodel.objects.all().delete()
+        for lst in response.get('result').get('optionList'):
             fin_prdt_cd = productmodel.objects.get(fin_prdt_cd=lst.get('fin_prdt_cd'))
-            option_serializer.save(fin_prdt_cd=fin_prdt_cd)
+            
+            try:
+                option = optionmodel.objects.get(fin_prdt_cd=fin_prdt_cd, save_trm=lst['save_trm'])
+                option_serializer = optionserializer(option, data=lst)
+            except ObjectDoesNotExist:   
+                option_serializer = optionserializer(data=lst)
+            except Exception as e:
+                return [False, e]
+                
+            if option_serializer.is_valid(raise_exception=True):
+                option_serializer.save(fin_prdt_cd=fin_prdt_cd)
 
-    return [True]
-    # except:
-    #     return False, '알 수 없는 에러'
+        return [True]
+    except Exception as e:
+        return [False, e]
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticatedOrReadOnly, IsAdminUser])

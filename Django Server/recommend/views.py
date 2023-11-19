@@ -5,11 +5,11 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from django.shortcuts import get_list_or_404, get_object_or_404
-from django.db.models import Count, Value, Q, Sum
+from django.db.models import Value, Q, Sum
 from django.db.models.functions import Coalesce
 
 from .models import UserProfile, Travel
-from .serializers import UserProfileSerializer, TravelSerializer
+from .serializers import UserProfileSerializer, TravelSerializer, CountrySerializer
 from fin_product.models import DepositOptions, SavingOptions
 from fin_product.serializers import DepositOptionsSerializer, GetSavingOptionsSerializer
 
@@ -197,4 +197,12 @@ def get_saving_for_travel(request, country):
         return Response({'detail' : '선택 기간에 적합한 적금 상품이 존재하지 않습니다.'}, status=status.HTTP_404_NOT_FOUND)
 
     serializer = DepositOptionsSerializer(savings_above_cost, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_country(request):
+    countries = get_list_or_404(Travel)
+    serializer = CountrySerializer(countries, many=True)
     return Response(serializer.data)
