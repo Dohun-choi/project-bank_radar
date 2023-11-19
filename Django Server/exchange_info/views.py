@@ -23,7 +23,7 @@ def update_exchange_DB(request):
     
     if not response:
         return Response({'detail':'비영업일의 데이터, 혹은 영업당일 11시 이전에 해당일의 데이터를 요청하여 데이터를 업데이트 할 수 없습니다.'})
-    
+    print(response)
     ExchangeInfo.objects.all().delete()
     for li in response:
         if li.get('result') != 1:
