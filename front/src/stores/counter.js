@@ -1,11 +1,15 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
+import { useRouter } from 'vue-router'
 
 export const useCounterStore = defineStore('counter', () => {
   const posts = ref([])
   const API_URL = 'http://127.0.0.1:8000'
   const token = ref(null)
+  
+  const nickname = ref(null)
+  const router = useRouter()
   // 로그인 유무
   const isLogin = computed(()=>{
     if (token.value === null){
@@ -21,7 +25,70 @@ export const useCounterStore = defineStore('counter', () => {
   const financeDepositsProducts = ref(null)
   const financeSavingsProducts = ref(null)
 
+
+  // 프로필 정보
+  const profileInfo = ref(null)
+  const profileLikes = ref(null)
   // actions
+
+
+  // 프로필 좋아요 데이터 가져오기
+  const getProfileLikes = ()=>{
+    axios({
+      method: 'GET',
+      url : `${API_URL}/accounts/user/info/`,
+      headers:{
+        Authorization: `Token ${token.value}`
+      }
+    })
+    .then((res) =>{
+      console.log('프로필 좋아요 데이터 가져오기 성공', res.data)
+      profileLikes.value = res.data
+    })
+    .catch((err)=>{
+      console.log('프로필 좋아요 데이터 가져오기 실패', err)
+    })
+  }
+
+ // 프로필 받아오기
+  const getProfile = ()=>{
+    axios({
+      method: 'GET',
+      url : `${API_URL}/api/v1/recommend/profile/`,
+      headers:{
+        Authorization: `Token ${token.value}`
+      }
+    })
+    .then((res) =>{
+      console.log('프로필 받아오기 성공', res)
+      profileInfo.value = res.data
+    })
+    .catch((err)=>{
+      console.log('프로필 받아오기 실패', err)
+    })
+  }
+  // 프로필 업데이트
+  const updateProfile = (data)=>{
+    axios({
+      method: 'PUT',
+      url : `${API_URL}/api/v1/recommend/profile/`,
+      data: data,
+      headers:{
+        Authorization: `Token ${token.value}`
+      }
+    })
+    .then((res) =>{
+      console.log('프로필 수정하기 성공', res)
+      profileInfo.value = res.data
+      router.push({name: 'ProfileView'})
+    })
+    .catch((err)=>{
+      console.log(data)
+      console.log('프로필 수정하기 실패', err)
+    })
+  }
+
+  // 포스트 받기
   const getPosts = ()=>{
     axios({
       method: 'get',
@@ -50,10 +117,11 @@ export const useCounterStore = defineStore('counter', () => {
       }
     })
     .then((res)=>{
-      console.log('성공')
+      console.log(' 회원가입 성공')
+      router.push({name: 'LogInView'})
     })
     .catch((err)=>{
-      console.log('실패', err)
+      console.log('회원가입 실패', err)
     })
   }
 
@@ -71,6 +139,10 @@ export const useCounterStore = defineStore('counter', () => {
     .then((res)=>{
       console.log('성공', res.data)
       token.value = res.data.key
+      alert('로그인 되었습니다.')
+      router.push({name: 'ArticleView'})
+      getProfile()
+      nickname.value = profileInfo.value.nickname
     })
     .catch((err)=>{
       console.log('실패', err)
@@ -81,23 +153,23 @@ export const useCounterStore = defineStore('counter', () => {
   const updateExchange = ()=>{
     axios({
       method: 'POST',
-      url : `${API_URL}/api/v1/exchage/update`,
+      url : `${API_URL}/api/v1/exchage/update/`,
       headers:{
         Authorization: `Token ${token.value}`
       }
     })
     .then((res) =>{
-      console.log('성공')
+      console.log('환율 DB에 저장 성공')
     })
     .catch((err)=>{
-      console.log('실패', err)
+      console.log('환율 DB에 저장 실패', err)
     })
   }
 
     // 환율 데이터 가져오기
     const getExchange = ()=>{
       axios({
-        method: 'get',
+        method: 'GET',
         url : `${API_URL}/api/v1/exchage/`,
         headers:{
           Authorization: `Token ${token.value}`
@@ -105,15 +177,20 @@ export const useCounterStore = defineStore('counter', () => {
       })
       .then((res) =>{
         exchanges.value = res.data
-        console.log('성공')
+        console.log('환율 데이터 가져오기 성공')
       })
       .catch((err)=>{
-        console.log('실패', err)
+        console.log('환율 데이터 가져오기 실패', err)
       })
     }
 
   //로그 아웃
-  const logout = () => token.value= null
+  const logout = () => {
+    token.value = null
+    nickname.value = null
+    profileInfo.value = null
+    localStorage.clear()
+  }
 
 
   // 금융 데이터 DB에 저장하기
@@ -126,10 +203,10 @@ export const useCounterStore = defineStore('counter', () => {
       }
     })
     .then((res) =>{
-      console.log('성공', res)
+      console.log('금융 데이터 DB저장 성공', res)
     })
     .catch((err)=>{
-      console.log('실패', err)
+      console.log('금융 데이터 DB저장 실패', err)
     })
   }
 
@@ -144,10 +221,10 @@ export const useCounterStore = defineStore('counter', () => {
     })
     .then((res) =>{
       financeDepositsProducts.value = res.data
-      console.log(res.data)
+      console.log('Deposits 가져오기 성공', res.data)
     })
     .catch((err)=>{
-      console.log('실패', err)
+      console.log('Deposits 가져오기 실패', err)
     })
   }
 
@@ -161,15 +238,22 @@ export const useCounterStore = defineStore('counter', () => {
     })
     .then((res) =>{
       financeSavingsProducts.value = res.data
-      console.log('성공', res)
+      console.log('Savings 가져오기 성공', res)
     })
     .catch((err)=>{
-      console.log('실패', err)
+      console.log('Savings 가져오기 실패', err)
     })
   }
 
   //
   
 
-  return {posts, API_URL, getPosts, signUp, logIn, token, isLogin, getExchange, exchanges, logout,getFinanceSavingsProducts, getFinanceDepositsProducts, updateExchange, updateFinanceProducts, financeSavingsProducts, financeDepositsProducts }
+  return {posts, API_URL, getPosts, signUp, logIn,
+     token, isLogin, getExchange, exchanges,
+      logout,getFinanceSavingsProducts,
+       getFinanceDepositsProducts, updateExchange,
+        updateFinanceProducts, financeSavingsProducts,
+         financeDepositsProducts, getProfile, profileInfo,
+          updateProfile, nickname, getProfileLikes,
+        profileLikes }
 }, { persist: true })

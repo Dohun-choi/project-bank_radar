@@ -1,44 +1,75 @@
 <template>
-    <div>
-      <div v-if="store.isLogin">
-        <p>환영합니다</p>
-        <button @click="store.logout">로그아웃</button>
+  <div>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand">Nav Bar</a>
+
+        <!-- <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button> -->
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link">Home</a>
+            </li>
+            <li class="nav-item">
+              <RouterLink :to="{ name: 'ArticleView' }" class="nav-link">Posts</RouterLink>
+            </li>
+            <li class="nav-item">
+              <RouterLink :to="{ name: 'MapView' }" class="nav-link">Map</RouterLink>
+            </li>
+            <li class="nav-item">
+              <RouterLink :to="{ name: 'SignUpView' }" class="nav-link">SignUp</RouterLink>
+            </li>
+            <li class="nav-item">
+              <RouterLink :to="{ name: 'LogInView' }" class="nav-link">LogIn</RouterLink>
+            </li>
+            <li class="nav-item">
+              <RouterLink :to="{ name: 'ExchangeView' }" class="nav-link">Exchange</RouterLink>
+            </li>
+            <li class="nav-item">
+              <RouterLink :to="{ name: 'FinanceView' }" class="nav-link">Finance</RouterLink>
+            </li>
+            <li class="nav-item">
+              <RouterLink :to="{ name: 'ProfileView' }" class="nav-link">Profile</RouterLink>
+            </li>
+          </ul>
+        </div>
+
       </div>
-      <div v-else>
-        로그인이 필요합니다.
+    </nav>
+
+    <div v-if="store.isLogin">
+      <p>{{ store.profileInfo.nickname }} 님 환영합니다</p>
+      <div v-if="store.profileInfo.nickname === `unknown${store.profileInfo.id}`">
+        <p>회원정보를 입력하시겠어요?</p>
+        <button @click="updateProfile"> 회원정보 수정하기</button>
       </div>
-      <!-- 로컬스토리지 초기화 실험용 -->
-      <button @click="clearStorage">스토리지 초기화</button>
-      <nav>
-        <RouterLink :to="{name: 'ArticleView'}">Posts</RouterLink>
-        <br>
-        <RouterLink :to="{name: 'MapView'}">Map</RouterLink>
-        <br>
-        <RouterLink :to="{name: 'SignUpView'}">SingUp</RouterLink>
-        <br>
-        <RouterLink :to="{name: 'LogInView'}">LogIn</RouterLink> 
-        <br>
-        <RouterLink :to="{name: 'ExchangeView'}">Exchange</RouterLink>
-        <br> 
-        <RouterLink :to="{name: 'FinanceView'}">Finance</RouterLink> 
-      </nav>
-      <RouterView />
+      <button @click="store.logout">로그아웃</button>
     </div>
+    <div v-else>
+      로그인이 필요합니다.
+    </div>
+
+    <RouterView />
+  </div>
 </template>
 
 <script setup>
 import { useCounterStore } from './stores/counter';
-import { ref, computed, onMounted } from 'vue';
-import { RouterView, RouterLink } from 'vue-router'
+import { RouterView, RouterLink, useRouter } from 'vue-router'
+import 'bootstrap/dist/css/bootstrap.min.css';
 
+const router = useRouter()
 const store = useCounterStore()
 
-const clearStorage = () => localStorage.clear()
-
-
+const updateProfile = () => {
+    router.push({ name: 'UpdateProfile' })
+}
 
 </script>
-
 
 <style scoped>
 
