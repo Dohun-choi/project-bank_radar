@@ -3,6 +3,7 @@ import ArticleView from '@/views/community/ArticleView.vue'
 import DetailView from '@/views/community/DetailView.vue'
 import CreateView from '@/views/community/CreateView.vue'
 import ModifyView from '@/views/community/ModifyView.vue'
+import NofityView from '@/views/community/NofityView.vue'
 
 import ProfileView from '@/views/accounts/ProfileView.vue'
 import UpdateProfile from '@/components/profile/UpdateProfile.vue'
@@ -11,6 +12,7 @@ import SignUpView from '@/views//accounts/SignUpView.vue'
 import LoginView from '@/views/accounts/LoginView.vue'
 import MapView from '@/views/map/MapView.vue'
 import ExchangeView from '@/views/exchange/ExchangeView.vue'
+import RecomandView from '@/views/recomand/RecomandView.vue'
 
 import FinanceView from '@/views/finance/FinanceView.vue'
 import SavingsDetail from '@/components/finance/SavingsDetail.vue'
@@ -90,6 +92,16 @@ const router = createRouter({
       path: '/subscribes',
       name: 'Subscribes',
       component: Subscribes
+    },
+    {
+      path: '/recomand',
+      name: 'RecomandView',
+      component: RecomandView
+    },
+    {
+      path: '/notify',
+      name: 'NofityView',
+      component: NofityView
     }
   ]
 })

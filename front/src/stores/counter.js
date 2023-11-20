@@ -33,7 +33,7 @@ export const useCounterStore = defineStore('counter', () => {
 
 
   // 프로필 좋아요 데이터 가져오기
-  const getProfileLikes = ()=>{
+  const getProfileLikes = ()=> {
     axios({
       method: 'GET',
       url : `${API_URL}/accounts/user/info/`,
@@ -44,6 +44,7 @@ export const useCounterStore = defineStore('counter', () => {
     .then((res) =>{
       console.log('프로필 좋아요 데이터 가져오기 성공', res.data)
       profileLikes.value = res.data
+      console.log('value', profileLikes.value)
     })
     .catch((err)=>{
       console.log('프로필 좋아요 데이터 가져오기 실패', err)
@@ -98,11 +99,11 @@ export const useCounterStore = defineStore('counter', () => {
       }
     })
     .then((res) =>{
-      console.log('성공', res)
+      console.log('포스트 받기 성공', res)
       posts.value = res.data
     })
     .catch((err)=>{
-      console.log('실패', err)
+      console.log('포스트 받기 실패', err)
     })
   }
 
@@ -143,6 +144,7 @@ export const useCounterStore = defineStore('counter', () => {
       router.push({name: 'ArticleView'})
       getProfile()
       nickname.value = profileInfo.value.nickname
+      getProfileLikes()
     })
     .catch((err)=>{
       console.log('실패', err)

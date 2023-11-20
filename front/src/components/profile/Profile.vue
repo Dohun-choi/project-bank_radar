@@ -3,8 +3,7 @@
     <button @click="goSubscribes">가입 내역 확인</button>
     
     <div>
-        <h1>Profile ㅎㅇ</h1>
-        <p>{{ userInfo }}</p>
+        <h1>Profile </h1>
         <p>user_id : {{ userInfo.id }} </p>
         <p>user_age : {{userInfo.age}}</p>
         <p>user_age_gruop : {{userInfo.age_group}}</p>

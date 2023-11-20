@@ -44,7 +44,6 @@
             <p>{{ debate.content }}</p>
         </div>
     </div>
-    <p>{{ options }}</p>
 </template>
 
 <script setup>
@@ -78,7 +77,7 @@ onMounted(()=>{
     }
 })
 .then((res)=>{
-    console.log('옵션 가져오기 성공', res.data);
+    console.log('옵션 가져오기 성공', store.profileLikes.deposits);
     options.value = res.data
 })
 .catch((err)=>{
@@ -114,7 +113,11 @@ axios({
 })
 .then((res)=>{
     console.log('투기장 성공');
-    debates.value.push(res.data)
+    if (debates.value === null){
+        debates.value === res.data
+    }
+    else{debates.value.push(res.data)}
+    
 })
 .catch((err)=>{
 console.log('투기장 실패', err)
@@ -132,12 +135,12 @@ axios({
     }
 })
 .then((res)=>{
-    console.log('성공', res.data);
+    console.log('가입 성공', res.data);
     option.is_into = res.data.isLiked
     option.into_count = res.data.likeCount
 })
 .catch((err)=>{
-console.log('실패', err)
+console.log('가입 실패', err)
 }) 
 }
 

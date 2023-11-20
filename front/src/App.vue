@@ -12,9 +12,6 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav">
             <li class="nav-item">
-              <a class="nav-link">Home</a>
-            </li>
-            <li class="nav-item">
               <RouterLink :to="{ name: 'ArticleView' }" class="nav-link">Posts</RouterLink>
             </li>
             <li class="nav-item">
@@ -34,6 +31,12 @@
             </li>
             <li class="nav-item">
               <RouterLink :to="{ name: 'ProfileView' }" class="nav-link">Profile</RouterLink>
+            </li>
+            <li class="nav-item">
+              <RouterLink :to="{ name: 'RecomandView' }" class="nav-link">Recomand</RouterLink>
+            </li>
+            <li class="nav-item">
+              <RouterLink :to="{ name: 'NofityView' }" class="nav-link">NofityView ({{ notifys }})</RouterLink>
             </li>
           </ul>
         </div>
@@ -61,13 +64,36 @@
 import { useCounterStore } from './stores/counter';
 import { RouterView, RouterLink, useRouter } from 'vue-router'
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
 
 const router = useRouter()
 const store = useCounterStore()
 
+const notifys = ref(null)
+
 const updateProfile = () => {
     router.push({ name: 'UpdateProfile' })
 }
+onMounted(() => {
+  if(store.isLogin){
+    axios({
+          method: 'GET',
+          url: `${store.API_URL}/api/v1/community/isnotify/`,
+          headers: {
+              Authorization: `Token ${store.token}`
+          }
+      })
+      .then((res)=>{
+          console.log('notify 가져오기 성공', res);
+          notifys.value = res.data.notifies
+      })
+      .catch((err)=>{
+      console.log('notify 가져오기 실패', err)
+      })
+  }
+});
+
 
 </script>
 

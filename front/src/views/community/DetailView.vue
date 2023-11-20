@@ -181,11 +181,12 @@ const createComment = () => {
       }
   })
   .then((res)=>{
-    console.log('성공', res.data)
+    console.log('댓글 작성 성공', res.data)
+    console.log(post.value.comment_set)
     post.value.comment_set.push(res.data)
   })
   .catch((err)=>{
-    console.log('실패', err)
+    console.log('댓글 작성 실패', err)
   }) 
 }
 
