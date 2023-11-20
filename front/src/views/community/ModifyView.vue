@@ -1,5 +1,6 @@
 <template>
     <div>
+        {{ title }}
         <form @submit.prevent="modify">
             <div>
                 <label for="title">제목 변경</label>
@@ -20,20 +21,21 @@ import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useCounterStore } from '../../stores/counter';
 
+
 const store = useCounterStore()
 const router = useRouter()
 const route = useRoute()
-
-const title = ref('')
-const content = ref('')
+const query = route.query
+const title = ref(query.title)
+const content = ref(query.content)
 
 const modify = () => {
     axios({
         method: 'PUT',
         url: `${store.API_URL}/api/v1/community/posts/${route.params.id}/`,
         data : {
-            title: title.value,
-            content: content.value
+            title: title.value ? title.value : query.title,
+            content: content.value ? content.value : query.content
         },
         headers: {
             Authorization: `Token ${store.token}`
