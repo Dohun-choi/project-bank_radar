@@ -113,8 +113,11 @@ axios({
     }
 })
 .then((res)=>{
-    console.log('성공');
-    debates.value.push(res.data)
+    console.log('투기장 성공');
+    if (debates.value === null){
+        debates.value === res.data
+    }
+    else{debates.value.push(res.data)}
 })
 .catch((err)=>{
 console.log('실패', err)
