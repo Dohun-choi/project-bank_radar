@@ -8,6 +8,8 @@ urlpatterns = [
     # GET: 게시글 상세 + 댓글, DELETE: 게시글 삭제, PUT: 게시글 수정
     path('posts/<int:post_pk>/likes/', views.post_like),
     # POST: 게시글 좋아요/취소, 개수
+    path('posts/search/', views.post_search),
+    # GET: 요청 주소에 params : {search_query : '검색할 내용'} 추가하기
 
     path('posts/<int:post_pk>/comments/', views.create_comment),
     # POST: 게시글에 댓글 달기

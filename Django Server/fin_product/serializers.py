@@ -72,6 +72,8 @@ class SavingDebatesSerializer(serializers.ModelSerializer):
 class GetSavingOptionsSerializer(serializers.ModelSerializer):
     into_count = serializers.IntegerField(source='into_users.count', read_only=True)
     is_into = serializers.SerializerMethodField(method_name='is_joined', read_only=True)
+    kor_co_nm = serializers.CharField(source='fin_prdt_cd.kor_co_nm', read_only=True)
+    fin_prdt_nm = serializers.CharField(source='fin_prdt_cd.fin_prdt_nm', read_only=True)
 
     class Meta:
         model = SavingOptions
@@ -87,6 +89,8 @@ class GetSavingOptionsSerializer(serializers.ModelSerializer):
 class GETDepositOptionsSerializer(serializers.ModelSerializer):
     into_count = serializers.IntegerField(source='into_users.count', read_only=True)
     is_into = serializers.SerializerMethodField(method_name='is_joined', read_only=True)
+    kor_co_nm = serializers.CharField(source='fin_prdt_cd.kor_co_nm', read_only=True)
+    fin_prdt_nm = serializers.CharField(source='fin_prdt_cd.fin_prdt_nm', read_only=True)
 
     class Meta:
         model = DepositOptions

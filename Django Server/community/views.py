@@ -172,3 +172,17 @@ def delete_notify(request, notify_pk):
     notify = get_object_or_404(Notify, pk=notify_pk)
     notify.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['GET'])
+def post_search(request):
+    query = request.GET.get('search_query')
+    print(query)
+
+    if query:
+        matching_posts = Post.objects.filter(title__icontains=query)
+        serializer = PostSerializer(matching_posts, many=True)
+
+        return Response(serializer.data)
+
+    return Response([])
