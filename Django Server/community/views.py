@@ -6,26 +6,26 @@ from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from django.shortcuts import get_list_or_404, get_object_or_404
 from django.db.models import Count
-from accounts.models import User
 
 from .models import Post, Comment, Notify
 from .serializers import PostListSerializer, PostSerializer, NestedCommentSerializer, NotifySerializer
 
 
 
-def create_notify(post_user, post_pk, parent_user, data):
-    print(post_user, post_pk, parent_user, data)
-    Notify.objects.create(user=post_user, content=data, id_of_content=post_pk)
-    if parent_user is not None:
+def create_notify(post_user, post_pk, parent_user, data, writer_pk):
+    if writer_pk != post_user.pk:
+        Notify.objects.create(user=post_user, content=data, id_of_content=post_pk)
+    if parent_user is not None and parent_user.pk != writer_pk:
         Notify.objects.create(user=parent_user, content=data, id_of_content=post_pk)
+
 
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def posts(request):
     if request.method == 'GET':
-        one_year_ago = datetime.now() - timedelta(days=365)
+        one_year_ago = (datetime.now() - timedelta(days=365)).strftime('%Y-%m-%d')
 
-        posts = get_list_or_404(Post.objects.filter(created_at__gte=one_year_ago))
+        posts = Post.objects.filter(created_at__gte=one_year_ago)
         serializer = PostListSerializer(posts, many=True)
         return Response(serializer.data)
     
@@ -74,12 +74,13 @@ def create_comment(request, post_pk):
     if serializer.is_valid(raise_exception=True):
         post = Post.objects.get(pk=post_pk)
         serializer.save(post=post, user=request.user)
-        if request.data['parent'] is None:
+        if serializer.data['parent'] is None:
             parent_user = None
         else:
-            comment = get_object_or_404(Comment, pk=request.data['parent'])
-            parent_user = get_object_or_404(User, pk=comment.pk)
-        create_notify(post.user, post_pk, parent_user, request.data['content'])
+            comment = get_object_or_404(Comment, pk=serializer.data['parent'])
+            parent_user = comment.user
+            print(parent_user)
+        create_notify(post.user, post_pk, parent_user, request.data['content'], request.user.pk)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -149,7 +150,7 @@ def comment_like(request, comment_pk):
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def get_notifies(request):
-    notifies = get_list_or_404(Notify, user=request.user)
+    notifies = Notify.objects.filter(user=request.user)
     for notify in notifies:
         if not notifies.read:
             notify.read = True

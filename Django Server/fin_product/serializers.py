@@ -28,7 +28,7 @@ class SavingOptionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = SavingOptions
         fields = '__all__'
-        read_only_fields = ('fin_prdt_cd', 'into_users', 'max_saving_output', )
+        read_only_fields = ('fin_prdt_cd', 'into_users',)
 
 
 class GETDepositProductsSerializer(serializers.ModelSerializer):
@@ -80,9 +80,8 @@ class GetSavingOptionsSerializer(serializers.ModelSerializer):
 
     def is_joined(self, obj):
         request = self.context.get('request')
-        if request:
-            return obj.into_users.filter(id=request.user.id).exists()
-        return False
+        return obj.into_users.filter(id=request.user.id).exists()
+
 
 
 class GETDepositOptionsSerializer(serializers.ModelSerializer):
@@ -96,6 +95,4 @@ class GETDepositOptionsSerializer(serializers.ModelSerializer):
 
     def is_joined(self, obj):
         request = self.context.get('request')
-        if request:
-            return obj.into_users.filter(id=request.user.id).exists()
-        return False
+        return obj.into_users.filter(id=request.user.id).exists()

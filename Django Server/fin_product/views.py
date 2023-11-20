@@ -30,9 +30,10 @@ def update(D_or_S, productserializer, optionserializer, productmodel, optionmode
         response = requests.get(url).json()
         if response.get('result').get('err_cd') != '000':
             print(response.get('result').get('err_msg'))
-            return False, response.get('result').get('err_msg')
+            return [False, response.get('result').get('err_msg')]
     except Exception as e:
-        return False, ['금융감독원 OPEN API에서 응답을 받을 수 없거나 올바르지 않은 응답을 받았습니다.', e]
+        print(e)
+        return [False, e]
 
     try:
         for lst in response.get('result').get('baseList'):
@@ -44,12 +45,12 @@ def update(D_or_S, productserializer, optionserializer, productmodel, optionmode
             except ObjectDoesNotExist:
                 product_serializer = productserializer(data=lst)
             except Exception as e:
+                print(e)
                 return [False, e]
 
             if product_serializer.is_valid(raise_exception=True):
                 product_serializer.save()
 
-        optionmodel.objects.all().delete()
         for lst in response.get('result').get('optionList'):
             fin_prdt_cd = productmodel.objects.get(fin_prdt_cd=lst.get('fin_prdt_cd'))
             
@@ -59,13 +60,15 @@ def update(D_or_S, productserializer, optionserializer, productmodel, optionmode
             except ObjectDoesNotExist:   
                 option_serializer = optionserializer(data=lst)
             except Exception as e:
+                print(e)
                 return [False, e]
                 
             if option_serializer.is_valid(raise_exception=True):
                 option_serializer.save(fin_prdt_cd=fin_prdt_cd)
-
+        
         return [True]
     except Exception as e:
+        print(e)
         return [False, e]
 
 @api_view(['POST'])
@@ -75,7 +78,8 @@ def update_product(request):
     saving_updated = update('saving', SavingProductsSerializer, SavingOptionsSerializer, SavingProducts, SavingOptions)
     if deposit_updated[0] and saving_updated[0]:
         return Response(status=status.HTTP_201_CREATED)
-    return Response({'detail': f'적금 갱신: {saving_updated[1]}\예금 갱신: {deposit_updated[1]}'}, status=status.HTTP_502_BAD_GATEWAY)
+    print(deposit_updated, saving_updated)
+    return Response({'detail': f'적금 갱신: {saving_updated}\예금 갱신: {deposit_updated}'}, status=status.HTTP_502_BAD_GATEWAY)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -97,7 +101,7 @@ def saving_from_DB(request):
 def deposit_options(request, fin_prdt_cd):
     product = get_object_or_404(DepositProducts, fin_prdt_cd=fin_prdt_cd)
     options = get_list_or_404(DepositOptions, fin_prdt_cd=product)
-    serializer = GETDepositOptionsSerializer(options, many=True)
+    serializer = GETDepositOptionsSerializer(options, many=True, context={'request':request})
     return Response(serializer.data)
 
 @api_view(['GET'])
