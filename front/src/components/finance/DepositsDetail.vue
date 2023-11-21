@@ -58,7 +58,7 @@ const route = useRoute()
 const store = useCounterStore()
 const key = route.params.key
 
-const debates = ref(null)
+const debates = ref([])
 const content = ref(null)
 
 
@@ -77,7 +77,7 @@ onMounted(()=>{
     }
 })
 .then((res)=>{
-    console.log('옵션 가져오기 성공', store.profileLikes.deposits);
+    console.log('옵션 가져오기 성공', res.data)
     options.value = res.data
 })
 .catch((err)=>{

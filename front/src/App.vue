@@ -53,7 +53,7 @@
       <button @click="store.logout">로그아웃</button>
     </div>
     <div v-else>
-      로그인이 필요합니다.
+      <p @click="goLogin">로그인이 필요합니다.</p>
     </div>
 
     <RouterView />
@@ -75,6 +75,8 @@ const notifys = ref(null)
 const updateProfile = () => {
     router.push({ name: 'UpdateProfile' })
 }
+
+const goLogin = () => router.push({name: 'LogInView'})
 onMounted(() => {
   if(store.isLogin){
     axios({

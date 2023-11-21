@@ -23,8 +23,8 @@ import { ref, onMounted } from 'vue';
 const store = useCounterStore()
 onMounted(()=>{
     store.updateFinanceProducts()
-    store.getFinanceDepositsProducts()
     store.getFinanceSavingsProducts()
+    store.getFinanceDepositsProducts()
 })
 
 const viewDeposits = () => {

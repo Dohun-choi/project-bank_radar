@@ -1,6 +1,5 @@
 <template>
     <div>
-        {{ title }}
         <form @submit.prevent="modify">
             <div>
                 <label for="title">제목 변경</label>
@@ -20,7 +19,6 @@ import axios from 'axios';
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useCounterStore } from '../../stores/counter';
-
 
 const store = useCounterStore()
 const router = useRouter()

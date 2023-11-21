@@ -14,7 +14,6 @@
                 <th scope="col">좋아요 수(명)</th>
                 <th scope="col">좋아요(가입)</th>
                 
-
                 </tr>
             </thead>
             <tbody v-for="option in options" :key="option.id" >
@@ -60,14 +59,13 @@ const route = useRoute()
 const store = useCounterStore()
 const key = route.params.key
 
-const debates = ref(null)
+const debates = ref([])
 const content = ref(null)
 
 const options = ref(null)
 
 const product = store.financeSavingsProducts.find(product => product.fin_prdt_cd === key)
 
-const formatNumber = num => new Intl.NumberFormat().format(num)
 
 onMounted(()=>{
     // 옵션 가져오기

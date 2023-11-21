@@ -1,7 +1,11 @@
 <template>
-    <div>
-        <h2>Notify</h2>
+
+    <div v-for="(notify, index) in notifys" :key=notify.id >
+        <p>content : {{ notify.content }}</p>
+        <button @click="deleteNotify(notify.id, index)"> 삭제</button>
+        <hr>
     </div>
+
 </template>
 
 <script setup>
@@ -22,7 +26,7 @@ onMounted(() => {
         }
     })
     .then((res)=>{
-        console.log('notify 가져오기 성공', res.data);
+        console.log('notify 데이터 가져오기 성공', res.data);
         notifys.value = res.data
     })
     .catch((err)=>{
@@ -30,16 +34,17 @@ onMounted(() => {
     })
 });
 
-const deleteNotify = (notifyPk) => {
+const deleteNotify = (notifyId, index) => {
     axios({
         method: 'DELETE',
-        url: `${store.API_URL}/api/v1/community/notify/${notifyPk}`,
+        url: `${store.API_URL}/api/v1/community/notify/${notifyId}`,
         headers: {
             Authorization: `Token ${store.token}`
         }
     })
     .then((res)=>{
         console.log('notify delete 성공');
+        notifys.value.splice(index, 1)
     })
     .catch((err)=>{
     console.log('notify delete 실패', err)

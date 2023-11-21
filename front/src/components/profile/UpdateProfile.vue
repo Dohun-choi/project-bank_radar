@@ -6,11 +6,6 @@
                 <input type="text" id="nickname" :placeholder="userInfo.nickname" v-model="nickname">
             </div>
 
-            <!-- <div>
-                <label for="age">나이 : </label>
-                <input type="text" id="age" :placeholder="userInfo.age" v-model="age">
-            </div> -->
-
             <div>
                 <label for="birth">생일 : </label>
                 <input type="text" id="birth" :placeholder="userInfo.birth" v-model="birth">
@@ -32,14 +27,13 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useCounterStore } from '../../stores/counter';
+import { useCounterStore } from '@/stores/counter';
 
 const store = useCounterStore()
 
 const userInfo = store.profileInfo
 
 const nickname = ref(null)
-// const age = ref(null)
 const birth = ref(null)
 const assets = ref(null)
 const monthly_income = ref(null)

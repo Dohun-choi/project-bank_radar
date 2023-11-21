@@ -30,9 +30,18 @@
             <hr>
         </div>
 
-        <div v-if="isViewTeravel">
+        <div v-if="isViewItem" v-for="(recomand, index)  in recomandItem" :key="recomand.id">
+            <div @click="goSavingsDetail(recomand.fin_prdt_cd)">
+                <p>{{ index + 1 }}번째 추천 적금상품 (눌러서 상세보기)</p>
+                <p> 은행 상품명</p>
+                <p> 기준 금리 : {{ recomand.intr_rate }}</p>
+                <p> 최고 금리 : {{ recomand.intr_rate2 }}</p>
+                <hr>
+            </div>
             
         </div>
+
+
     </div>
 </template>
 
@@ -40,12 +49,14 @@
 import { ref } from 'vue';
 import { useCounterStore } from '../../stores/counter';
 import axios from 'axios';
+import { useRouter } from 'vue-router';
 
 
+const router = useRouter()
 const store = useCounterStore()
 
 const isViewTravel = ref(true)
-const isViewTeravel = ref(false)
+const isViewItem = ref(false)
 
 const selectedPeriod = ref(null)
 const selectedCountry = ref(null)
@@ -58,7 +69,7 @@ const recomandItem = ref(null)
 
 const searchTravel = () =>{
     isViewTravel.value = true
-    isViewTeravel.value = false
+    isViewItem.value = false
     console.log(selectedPeriod.value)
     // 저축 기간에 따른 여행지 추천 데이터 가져오기
     axios({
@@ -71,6 +82,7 @@ const searchTravel = () =>{
     .then((res)=>{
         console.log('travel 가져오기 성공', res.data);
         travelDestinations.value = res.data
+        selectedPeriod.value = null
     })
     .catch((err)=>{
     console.log('travel 가져오기 실패', err)
@@ -80,19 +92,21 @@ const searchTravel = () =>{
 
 const searchTeravel = () => {
     isViewTravel.value = false
-    isViewTeravel.value = true
+    isViewItem.value = true
     console.log(selectedCountry.value)
+
     // 여행지에 따른 적금 상품 추천
     axios({
         method: 'GET',
-        url: `${store.API_URL}/api/v1/recommend/teravel/${selectedCountry.value}`,
+        url: `${store.API_URL}/api/v1/recommend/travel/${selectedCountry.value}`,
         headers: {
             Authorization: `Token ${store.token}`
         }
     })
     .then((res)=>{
-        console.log('travel 가져오기 성공', res);
-        recomandItem.value = res
+        console.log('travel 가져오기 성공', res.data);
+        recomandItem.value = res.data
+        selectedCountry.value = null
 
     })
     .catch((err)=>{
@@ -100,6 +114,13 @@ const searchTeravel = () => {
     alert(err.response)
     })
 }
+
+const goSavingsDetail = (key) => {
+    router.push({
+        name: 'SavingsDetail',
+        params:{key: key},
+}
+)}
 
 
 </script>
