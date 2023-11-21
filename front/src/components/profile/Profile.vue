@@ -7,7 +7,7 @@
             <h4 class="card-title">'{{ userInfo.nickname }}'님의 프로필</h4>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">
-                    <strong>생년월일:</strong> {{ userInfo.birth.slice(0, 10) }}
+                    <strong>생년월일:</strong> {{ userInfo.birth ? userInfo.birth.slice(0, 10) : null }}
                 </li>
                 <li class="list-group-item">
                     <strong>나이:</strong> {{ userInfo.age }}
