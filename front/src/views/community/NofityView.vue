@@ -1,9 +1,10 @@
 <template>
-
-    <div v-for="(notify, index) in notifys" :key=notify.id >
-        <p>content : {{ notify.content }}</p>
-        <button @click="deleteNotify(notify.id, index)"> 삭제</button>
-        <hr>
+    <div>
+        <div v-for="(notify, index) in notifys" :key=notify.id >
+            <p>content : {{ notify.content }}</p>
+            <button @click="deleteNotify(notify.id, index)"> 삭제</button>
+            <hr>
+        </div>
     </div>
 
 </template>

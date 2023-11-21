@@ -20,9 +20,16 @@ import DepositsDetail from '@/components/finance/DepositsDetail.vue'
 
 import { useCounterStore } from '@/stores/counter'
 
+import MainView from '@/views/Main.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+        path: '/',
+        name: 'MainView',
+        component: MainView
+    },
     {
       path: '/',
       name: 'ArticleView',
@@ -102,7 +109,7 @@ const router = createRouter({
       path: '/notify',
       name: 'NofityView',
       component: NofityView
-    }
+    },
   ]
 })
 
