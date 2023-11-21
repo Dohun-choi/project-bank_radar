@@ -14,14 +14,16 @@
     </div>
     <div class="container">
       <div class="row">
-        <ul class="list-group col-2">
-          <RouterLink :to="{ name: 'ArticleView' }" class="list-group-item">게시글</RouterLink>
-          <RouterLink :to="{ name: 'FinanceView' }" class="list-group-item">예금</RouterLink>
-          <RouterLink :to="{ name: 'FinanceView' }" class="list-group-item">적금</RouterLink>
-          <RouterLink :to="{ name: 'ExchangeView' }" class="list-group-item">환율</RouterLink>
-          <RouterLink :to="{ name: 'RecomandView' }" class="list-group-item">적금 상품 추천</RouterLink>
-          <RouterLink :to="{ name: 'RecomandView' }" class="list-group-item">여행지 추천</RouterLink>
-        </ul>
+        <div class=" col-2">
+          <ul class="list-group">
+            <RouterLink :to="{ name: 'ArticleView' }" class="list-group-item">게시글</RouterLink>
+            <RouterLink :to="{ name: 'FinanceView' }" class="list-group-item">예금</RouterLink>
+            <RouterLink :to="{ name: 'FinanceView' }" class="list-group-item">적금</RouterLink>
+            <RouterLink :to="{ name: 'ExchangeView' }" class="list-group-item">환율</RouterLink>
+            <RouterLink :to="{ name: 'RecomandView' }" class="list-group-item">적금 상품 추천</RouterLink>
+            <RouterLink :to="{ name: 'RecomandView' }" class="list-group-item">여행지 추천</RouterLink>
+          </ul>
+        </div>
         <RouterView class="col-8"/>
         <div  class="col-2">
           <template v-if="!CounterStore.isLogin">
@@ -52,5 +54,11 @@ const CounterStore = useCounterStore()
 <style scoped>
 .title {
   margin-bottom: 15px;
+  background-color: aliceblue;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.list-group-item:hover {
+  background-color: #f0f0f0; /* Change to a slightly darker color */
 }
 </style>
