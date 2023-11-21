@@ -152,7 +152,7 @@ def comment_like(request, comment_pk):
 def get_notifies(request):
     notifies = Notify.objects.filter(user=request.user)
     for notify in notifies:
-        if not notifies.read:
+        if not notify.read:
             notify.read = True
             notify.save()
     serializer = NotifySerializer(notifies, many=True)
@@ -181,8 +181,20 @@ def post_search(request):
 
     if query:
         matching_posts = Post.objects.filter(title__icontains=query)
-        serializer = PostSerializer(matching_posts, many=True)
+        serializer = PostListSerializer(matching_posts, many=True)
 
         return Response(serializer.data)
 
     return Response([])
+
+
+@api_view(['GET'])
+def popular_posts(request):
+    if request.method == 'GET':
+        popular_in_month = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
+
+        posts = Post.objects.filter(created_at__gte=popular_in_month) \
+                    .annotate(num_likes=Count('like_users')) \
+                    .order_by('-num_likes')
+        serializer = PostListSerializer(posts, many=True)
+        return Response(serializer.data)

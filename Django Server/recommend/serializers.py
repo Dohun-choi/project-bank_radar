@@ -14,7 +14,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class TravelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Travel
-        fields = '__all__'
+        fields = ('country', 'cost', )
 
 
 class CountrySerializer(serializers.ModelSerializer):

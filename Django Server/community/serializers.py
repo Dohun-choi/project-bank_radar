@@ -5,7 +5,7 @@ from mptt.utils import tree_item_iterator
 class PostListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
-        fields = ('id', 'title', 'updated_at', )
+        fields = ('id', 'title', 'updated_at', 'user', )
 
 
 
@@ -88,5 +88,4 @@ class PostSerializer(serializers.ModelSerializer):
 class NotifySerializer(serializers.ModelSerializer):
     class Meta:
         model = Notify
-        fields = '__all__'
         exclude = ('user',)

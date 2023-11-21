@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from .models import User
 from recommend.serializers import UserProfileSerializer
 from fin_product.serializers import GETDepositOptionsSerializer, GetSavingOptionsSerializer
-from community.serializers import PostSerializer, NestedCommentSerializer
+from community.serializers import PostListSerializer, NestedCommentSerializer
 
 
 @api_view(['GET'])
@@ -18,16 +18,16 @@ def GetUserRelatedData(request):
     profile_serializer = UserProfileSerializer(profile, many=True).data
 
     into_deposit_options = user.into_deposit_options.all()
-    into_deposit_options_serializer = GETDepositOptionsSerializer(into_deposit_options, many=True).data
+    into_deposit_options_serializer = GETDepositOptionsSerializer(into_deposit_options, many=True, context={'request':request}).data
 
     into_saving_options = user.into_saving_options.all()
-    into_saving_options_serializer = GetSavingOptionsSerializer(into_saving_options, many=True).data
+    into_saving_options_serializer = GetSavingOptionsSerializer(into_saving_options, many=True, context={'request':request}).data
 
     posts = user.post_writer.all()
-    posts_serializer = PostSerializer(posts, many=True).data
+    posts_serializer = PostListSerializer(posts, many=True).data
 
     liked_posts = user.like_post.all()
-    like_post_serializer = PostSerializer(liked_posts, many=True).data
+    like_post_serializer = PostListSerializer(liked_posts, many=True).data
 
     comments = user.comment_writer.all()
     comments_serializer = NestedCommentSerializer(comments, many=True).data

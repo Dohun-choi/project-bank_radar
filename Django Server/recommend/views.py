@@ -11,7 +11,7 @@ from django.db.models.functions import Coalesce
 from .models import UserProfile, Travel
 from .serializers import UserProfileSerializer, TravelSerializer, CountrySerializer
 from fin_product.models import DepositOptions, SavingOptions
-from fin_product.serializers import DepositOptionsSerializer, GetSavingOptionsSerializer
+from fin_product.serializers import GETDepositOptionsSerializer, GetSavingOptionsSerializer
 
 @api_view(['GET', 'PUT'])
 @permission_classes([IsAuthenticated])
@@ -117,22 +117,22 @@ def get_top_products_with_options(options_model, group_type, user_profile):
             )[:10]
         )
     return top_products
-
+groupe_name = {'age' : '나이', 'monthly_income' : '월 수입', 'assets': '자산'}
 @api_view(['GET'])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def deposits_recommend(request, group_type):
     if group_type not in {'age', 'monthly_income', 'assets', 'likes'}:
-        return Response({'error': 'Invalid group_type'})
+        return Response({'detail':'찾을 수 없는 페이지'},status=status.HTTP_404_NOT_FOUND)
     
-    if group_type != 'likes' and IsAuthenticated:
+    if group_type != 'likes' and not IsAuthenticated:
         return Response({'detail': '회원 정보를 기반으로 추천하는 서비스는 로그인이 필요합니다.'})
 
     requesting_user_profile = get_object_or_404(UserProfile, user=request.user)
 
     top_10_liked_deposits = get_top_products_with_options(DepositOptions, group_type, requesting_user_profile)
     if top_10_liked_deposits == False:
-        return Response({'detail': f'{group_type}의 값을 입력하지 않았습니다. 프로필에서 {group_type}를 입력해주세요'})
-    serializer = DepositOptionsSerializer(top_10_liked_deposits, many=True, context={'request': request})
+        return Response({'detail': f'{groupe_name[group_type]}의 값을 입력하지 않았습니다. 프로필에서 {groupe_name[group_type]}를 입력해주세요'})
+    serializer = GETDepositOptionsSerializer(top_10_liked_deposits, many=True, context={'request': request})
     return Response(serializer.data)
 
 
@@ -140,16 +140,16 @@ def deposits_recommend(request, group_type):
 @permission_classes([IsAuthenticated])
 def savings_recommend(request, group_type):
     if group_type not in {'age', 'monthly_income', 'assets', 'likes'}:
-        return Response({'error': 'Invalid group_type'})
+        return Response({'detail':'찾을 수 없는 페이지'},status=status.HTTP_404_NOT_FOUND)
     
-    if group_type != 'likes' and IsAuthenticated:
+    if group_type != 'likes' and not IsAuthenticated:
         return Response({'detail': '회원 정보를 기반으로 추천하는 서비스는 로그인이 필요합니다.'})
     
     requesting_user_profile = get_object_or_404(UserProfile, user=request.user)
 
     top_10_liked_savings = get_top_products_with_options(SavingOptions, group_type, requesting_user_profile)
     if top_10_liked_savings == False:
-        return Response({'detail': f'{group_type}의 값을 입력하지 않았습니다. 프로필에서 {group_type}를 입력해주세요'})
+        return Response({'detail': f'{groupe_name[group_type]}의 값을 입력하지 않았습니다. 프로필에서 {groupe_name[group_type]}를 입력해주세요'})
     serializer = GetSavingOptionsSerializer(top_10_liked_savings, many=True, context={'request': request})
     return Response(serializer.data)
 
@@ -177,7 +177,7 @@ def travel_recommand(request, save_period):
         (Q(when__contains=date_after_a_month) | Q(when__contains=next_recommend))
         & Q(cost__lte=maximum_saving_output)
     )
-
+    
     if not recommend_travel_place.exists():
         return Response({'detail' : '선택 기간에 이후에 적합한 여행지가 존재하지 않습니다.'}, status=status.HTTP_404_NOT_FOUND)
     
@@ -188,7 +188,7 @@ def travel_recommand(request, save_period):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_saving_for_travel(request, country):
-    cost = get_object_or_404(Travel, country=country)
+    cost = get_object_or_404(Travel, country=country).cost
 
     savings_above_cost = SavingOptions.objects.filter(max_saving_output__gt=cost) \
     .order_by('save_trm', 'max_saving_output')[:5]
@@ -196,7 +196,7 @@ def get_saving_for_travel(request, country):
     if not savings_above_cost.exists():
         return Response({'detail' : '선택 기간에 적합한 적금 상품이 존재하지 않습니다.'}, status=status.HTTP_404_NOT_FOUND)
 
-    serializer = DepositOptionsSerializer(savings_above_cost, many=True)
+    serializer = GETDepositOptionsSerializer(savings_above_cost, many=True, context={'request':request})
     return Response(serializer.data)
 
 
