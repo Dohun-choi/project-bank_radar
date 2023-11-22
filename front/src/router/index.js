@@ -33,7 +33,7 @@ const router = createRouter({
         component: MainView
     },
     {
-      path: '/',
+      path: '/articles',
       name: 'ArticleView',
       component: ArticleView
     },
