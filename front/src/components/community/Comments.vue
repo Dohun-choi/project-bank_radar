@@ -7,7 +7,7 @@ import { useCounterStore } from '../../stores/counter';
 const currentInstance = getCurrentInstance();
 
 const store = useCounterStore()
-
+const userId = store.profileInfo.id
 
 const props = defineProps({
   comment: Object,
@@ -131,15 +131,16 @@ const removeComment = (commentToRemove) => {
         {{ comment.is_liked ? '좋아요 취소' : '좋아요' }}
       </button>
 
-      <form v-show="showModify" @submit.prevent="commentModify" class="modify-comment">
-        <label for="newContent" class="form-label">댓글 수정</label>
-        <input type="text" id="newContent" v-model="newContent" class="form-control">
-        <button type="submit" class="btn btn-warning ml-2">수정하기</button>
-      </form>
-      <button @click="showModify = !showModify" class="btn btn-secondary ml-2">{{showModify? '접기' : '수정하기'}}</button>
-      
-      <button @click="deleteComment" class="btn btn-danger ml-2">댓글 삭제</button>
-
+      <template v-if="userId === comment.user">
+        <form v-show="showModify && comment.user" @submit.prevent="commentModify" class="modify-comment">
+            <label for="newContent" class="form-label">댓글 수정</label>
+            <input type="text" id="newContent" v-model="newContent" class="form-control">
+            <button type="submit" class="btn btn-warning ml-2">수정하기</button>
+        </form>
+        <button @click="showModify = !showModify" class="btn btn-secondary ml-2">{{showModify? '접기' : '수정하기'}}</button>
+        
+        <button @click="deleteComment" class="btn btn-danger ml-2">댓글 삭제</button>
+      </template>
       <form @submit.prevent="createComment" v-show="showReComment" class="create-re-comment">
         <label for="reComment" class="form-label">대댓글 입력</label>
         <input type="text" id="reComment" v-model="content" class="form-control" placeholder="대댓글을 작성해주세요">

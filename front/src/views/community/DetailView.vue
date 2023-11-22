@@ -1,5 +1,6 @@
 <template>
-  <div class="container mt-4">
+    <div>
+    <div class="container mt-4">
 
     <div class="info card">
 
@@ -25,8 +26,6 @@
 
     </div>
 
-
-
     <hr class="my-4">
     <div class="create-comment">
       <form @submit.prevent="createComment">
@@ -40,15 +39,15 @@
     <hr>
 
     <!-- 댓글 컴포넌트 추가 -->
-    <Comments v-for="comment in post.comment_set"
-        :comment="comment"
-        :post_pk="post.id"
-        :parent="null"
-        :key="comment.id"
-        :parentname = "null"
-        @delete-comment="removeComment(comment)"/>
-
+        <Comments v-for="comment in post.comment_set"
+            :comment="comment"
+            :post_pk="post.id"
+            :parent="null"
+            :key="comment.id"
+            :parentname = "null"
+            @delete-comment="removeComment(comment)"/>
   </div>
+</div>
 </template>
 
 <script setup>
@@ -102,7 +101,14 @@ const deletePost = () => {
 };
 
 // 수정 페이지로 이동
-const moveModify = () => router.push({ name: 'ModifyView' });
+const moveModify = () => {
+    router.push({
+        name: 'ModifyView',
+        query: {
+        title: post.value.title,
+        content: post.value.content
+        }
+})}
 
 // 게시글 좋아요
 const postLike = () => {

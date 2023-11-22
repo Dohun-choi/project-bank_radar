@@ -1,5 +1,6 @@
 <template>
-  <div class="container mt-4 text-left">
+  <div>
+    <div  class="container mt-4 text-left">
     <h3 class="custom-heading">게시글 작성</h3>
     <form @submit.prevent="createPost" class="custom-form">
       <div class="mb-3">
@@ -12,6 +13,7 @@
       </div>
       <input type="submit" class="btn btn-danger">
     </form>
+</div>
   </div>
 </template>
 

@@ -14,7 +14,7 @@
     </div>
     <div class="container" >
       <div class="row">
-        <div class=" col-2">
+        <div class="col-lg-2">
           <ul class="list-group">
             <RouterLink :to="{ name: 'MainView' }" class="list-group-item" :class="{ 'active': isActive('MainView') }">메인 페이지</RouterLink>
             <RouterLink :to="{ name: 'ArticleView' }" class="list-group-item" :class="{ 'active': isActive('ArticleView') }">게시글</RouterLink>
@@ -25,8 +25,8 @@
             <RouterLink :to="{ name: 'RecommendTravelView' }" class="list-group-item" :class="{ 'active': isActive('RecommendTravelView') }">여행지 추천</RouterLink>
           </ul>
         </div>
-        <RouterView class="col-8"/>
-        <div class="col-2">
+        <RouterView class="col-lg-8"/>
+        <div class="col-lg-2">
           <div v-if="!CounterStore.isLogin" class="login-container" >
             <LogInView/>
               <br>

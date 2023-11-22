@@ -99,6 +99,26 @@ def savings_recommend(request, group_type):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def travel_recommand(request, save_period):
+    monthly_saving = int(request.GET.get('monthly_saving', default=False))
+    print(monthly_saving)
+    if monthly_saving:
+        rate = 3
+        intr_rate_type = request.GET.get('intr_rate_type', default='S')
+        save_period = int(save_period)
+
+        if intr_rate_type == 'S':
+            money = (monthly_saving * rate * (save_period+1)*save_period//2)//12
+        elif intr_rate_type == 'M':
+            money = (monthly_saving*rate*save_period//12)
+        
+        country = Travel.objects.filter(cost__lt=money).order_by('-cost')[:5]
+
+        if not country.exists():
+            return Response({'detail' : '선택 기간에 적합한 여행지 상품이 존재하지 않습니다.'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = TravelSerializer(country, many=True, context={'request':request})
+        return Response(serializer.data)
+
     today = date.today()
 
     month = today.replace(day=1, month=today.month + 1).month
@@ -121,43 +141,24 @@ def travel_recommand(request, save_period):
     if not recommend_travel_place.exists():
         return Response({'detail' : '선택 기간에 이후에 적합한 여행지가 존재하지 않습니다.'}, status=status.HTTP_404_NOT_FOUND)
     
-    serializer = TravelSerializer(recommend_travel_place, many=TravelSerializer)
+    serializer = TravelSerializer(recommend_travel_place, many=True)
     return Response(serializer.data)
 
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_saving_for_travel(request, country):
-    monthly_saving = int(request.GET.get('monthly_saving', default=False))
-    if request.GET.get('monthly_saving'):
-        rate = 3
-        intr_rate_type = request.GET.get('intr_rate_type', default='S')
-        period = int(request.GET.get('period'))
 
-        if intr_rate_type == 'S':
-            money = (monthly_saving * rate * (period+1)*period//2)//12
-        elif intr_rate_type == 'M':
-            money = (monthly_saving*rate*period//12)
-        
-        savings_above_cost = SavingOptions.objects.filter(max_saving_output__gt=money).order_by('?')[:5]
+    cost = get_object_or_404(Travel, country=country).cost
+    cost //= 10000
+    savings_above_cost = SavingOptions.objects.filter(max_saving_output__gt=cost) \
+    .order_by('?')[:5]
 
-        if not savings_above_cost.exists():
-            return Response({'detail' : '선택 기간에 적합한 적금 상품이 존재하지 않습니다.'}, status=status.HTTP_404_NOT_FOUND)
+    if not savings_above_cost.exists():
+        return Response({'detail' : '선택 기간에 적합한 적금 상품이 존재하지 않습니다.'}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = GetSavingOptionsSerializer(savings_above_cost, many=True, context={'request':request})
-        return Response(serializer.data)
-        
-    else:
-        cost = get_object_or_404(Travel, country=country).cost
-        cost //= 1000
-        savings_above_cost = SavingOptions.objects.filter(max_saving_output__gt=cost) \
-        .order_by('save_trm', 'max_saving_output')[:5]
-
-        if not savings_above_cost.exists():
-            return Response({'detail' : '선택 기간에 적합한 적금 상품이 존재하지 않습니다.'}, status=status.HTTP_404_NOT_FOUND)
-
-        serializer = GetSavingOptionsSerializer(savings_above_cost, many=True, context={'request':request})
-        return Response(serializer.data)
+    serializer = GetSavingOptionsSerializer(savings_above_cost, many=True, context={'request':request})
+    return Response(serializer.data)
 
 
 @api_view(['GET'])

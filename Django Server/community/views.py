@@ -95,7 +95,7 @@ def comment_detail(request, comment_pk):
         return Response(status=status.HTTP_404_NOT_FOUND)
     
     if comment.user.id != request.user.id:
-        return Response({'오류':'다른 사람이 작성한 댓글을 수정 또는 삭제할 수 없습니다.'})
+        return Response({'detail':'다른 사람이 작성한 댓글을 수정 또는 삭제할 수 없습니다.'}, status=status.HTTP_401_UNAUTHORIZED)
     
     if request.method == 'DELETE':
         comment.delete()

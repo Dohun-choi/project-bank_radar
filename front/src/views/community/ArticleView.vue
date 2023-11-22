@@ -1,5 +1,6 @@
 <template>
-  <div class="article-page-container">
+  <div>
+    <div  class="article-page-container">
     <h1 class="text-center mb-4">자유 게시판</h1>
     <div class="contain">
       <Search />
@@ -10,6 +11,7 @@
     <ArticleList />
 
   </div>
+</div>
 </template>
 
 <script setup>

@@ -8,11 +8,13 @@
         {{ period }}개월
         </option>
     </select>
+    <input type="number" placeholder="월 적금액" v-model="monthly">
     <input type="submit" value="검색하기" class="btn btn-primary">
     </form>
 
     <div class="row">
     <div v-for="(recommend, index) in travelDestinations" :key="recommend.id" class="col-md-4 mb-3">
+        <a class="no-decoration" href="https://www.australia.com/ko-kr?cid=paid-search%7cko%7cSYD701%7cbrand%7cGoogle%7c%7c%7c%7c%7c%7c%7c%7c%7c%7c&ef_id=CjwKCAiAx_GqBhBQEiwAlDNAZn15q-1El_3sUSuGKMeCpSdwue4TQtDMVKB7dG5XjMQ-OzgA5kRr5BoCDg4QAvD_BwE:G:s&s_kwcid=AL!4635!3!499116948237!b!!g!!%252B%25ED%2598%25B8%25EC%25A3%25BC%2520%252B%25EA%25B4%2580%25EA%25B4%2591%25EC%25B2%25AD!11310016704!113927886674&utm_actcampaign=11310016704&gad_source=1">
         <div class="card" @click="goSavingsDetail(recommend.fin_prdt_cd)">
         <img src="@/assets/evo.png" class="card-img-top" alt="Product Image">
         <div class="card-body">
@@ -22,6 +24,7 @@
             <p class="card-text">추천 기간(월): {{ recommend.when }}</p>
         </div>
         </div>
+        </a>
     </div>
     </div>
 </div>
@@ -39,15 +42,27 @@ const store = useCounterStore();
 const selectedPeriod = ref(null);
 const periods = [6, 12, 24, 36];
 const travelDestinations = ref(null);
+const monthly = ref(null)
 
 const searchTravel = () => {
-axios({
-    method: 'GET',
-    url: `${store.API_URL}/api/v1/recommend/travel/${selectedPeriod.value}`,
-    headers: {
-    Authorization: `Token ${store.token}`
+    const config = {
+        method: 'GET',
+        url: `${store.API_URL}/api/v1/recommend/travel/${selectedPeriod.value}`,
+        headers: {
+        Authorization: `Token ${store.token}`
+        },
+        params : {
+            monthly_saving: null,
+            intr_rate_type: 'S',
+            period: 6
+        }
     }
-})
+
+    if (typeof monthly.value === 'number' && monthly.value > 10000) {
+        config.params.monthly_saving = monthly.value
+    }
+
+    axios(config)
     .then((res) => {
     console.log('travel 가져오기 성공', res.data);
     travelDestinations.value = res.data;
@@ -118,5 +133,10 @@ margin-bottom: 0.5rem;
 
 .row {
 margin-top: 1rem;
+}
+
+.no-decoration {
+    text-decoration: none; /* Removes underline */
+    color: inherit; /* Inherits color from its parent */
 }
 </style>
