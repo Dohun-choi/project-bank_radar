@@ -12,9 +12,11 @@ import SignUpView from '@/views//accounts/SignUpView.vue'
 import LoginView from '@/views/accounts/LoginView.vue'
 import MapView from '@/views/map/MapView.vue'
 import ExchangeView from '@/views/exchange/ExchangeView.vue'
-import RecomandView from '@/views/recomand/RecomandView.vue'
+import RecommendItemView from '@/views/recommend/RecommendItemView.vue'
+import RecommendTravelView from '@/views/recommend/RecommendTravelView.vue'
 
-import FinanceView from '@/views/finance/FinanceView.vue'
+import FinanceDepositsView from '@/views/finance/FinanceDepositsView.vue'
+import FinanceSavingsView from '@/views/finance/FinanceSavingsView.vue'
 import SavingsDetail from '@/components/finance/SavingsDetail.vue'
 import DepositsDetail from '@/components/finance/DepositsDetail.vue'
 
@@ -71,9 +73,14 @@ const router = createRouter({
       component: ModifyView
     },
     {
-      path: '/finance',
-      name: 'FinanceView',
-      component: FinanceView
+      path: '/financeDeposits',
+      name: 'FinanceDepositsView',
+      component: FinanceDepositsView
+    },
+    {
+      path: '/financeSavings',
+      name: 'FinanceSavingsView',
+      component: FinanceSavingsView
     },
     {
       path: '/savingsDetail/:key',
@@ -101,9 +108,14 @@ const router = createRouter({
       component: Subscribes
     },
     {
-      path: '/recomand',
-      name: 'RecomandView',
-      component: RecomandView
+      path: '/recommendTravel',
+      name: 'RecommendTravelView',
+      component: RecommendTravelView
+    },
+    {
+      path: '/recommendItem',
+      name: 'RecommendItemView',
+      component: RecommendItemView
     },
     {
       path: '/notify',

@@ -12,26 +12,29 @@
       </RouterLink>
     </div>
     </div>
-    <div class="container">
+    <div class="container, babo" >
       <div class="row">
         <div class=" col-2">
           <ul class="list-group">
-            <RouterLink :to="{ name: 'ArticleView' }" class="list-group-item">게시글</RouterLink>
-            <RouterLink :to="{ name: 'FinanceView' }" class="list-group-item">예금</RouterLink>
-            <RouterLink :to="{ name: 'FinanceView' }" class="list-group-item">적금</RouterLink>
-            <RouterLink :to="{ name: 'ExchangeView' }" class="list-group-item">환율</RouterLink>
-            <RouterLink :to="{ name: 'RecomandView' }" class="list-group-item">적금 상품 추천</RouterLink>
-            <RouterLink :to="{ name: 'RecomandView' }" class="list-group-item">여행지 추천</RouterLink>
+            <RouterLink :to="{ name: 'MainView' }" class="list-group-item" :class="{ 'active': isActive('MainView') }">메인 페이지</RouterLink>
+            <RouterLink :to="{ name: 'ArticleView' }" class="list-group-item" :class="{ 'active': isActive('ArticleView') }">게시글</RouterLink>
+            <RouterLink :to="{ name: 'FinanceDepositsView' }" class="list-group-item" :class="{ 'active': isActive('FinanceDepositsView') }">예금</RouterLink>
+            <RouterLink :to="{ name: 'FinanceSavingsView' }" class="list-group-item" :class="{ 'active': isActive('FinanceSavingsView') }">적금</RouterLink>
+            <RouterLink :to="{ name: 'ExchangeView' }" class="list-group-item" :class="{ 'active': isActive('ExchangeView') }">환율</RouterLink>
+            <RouterLink :to="{ name: 'RecommendItemView' }" class="list-group-item" :class="{ 'active': isActive('RecommendItemView') }">적금 상품 추천</RouterLink>
+            <RouterLink :to="{ name: 'RecommendTravelView' }" class="list-group-item" :class="{ 'active': isActive('RecommendTravelView') }">여행지 추천</RouterLink>
           </ul>
         </div>
         <RouterView class="col-8"/>
-        <div  class="col-2">
-          <template v-if="!CounterStore.isLogin">
+        <div class="col-2">
+          <div v-if="!CounterStore.isLogin" class="login-container" >
             <LogInView/>
-            <button>
-              <RouterLink :to="{ name: 'SignUpView' }" class="list-group-item">회원가입</RouterLink>
-            </button>
-          </template>
+              <br>
+              <p>아직 계정이 없으시다면?</p>
+              <button class="btn btn-primary" style="background-color: #e5007e; border-color: #e5007e;">
+                <RouterLink :to="{ name: 'SignUpView' }" style="color: white;" >회원가입</RouterLink>
+              </button>
+          </div>
           <SimpleProfile v-if="CounterStore.isLogin"/>
         </div>
       </div>
@@ -42,13 +45,17 @@
 
 <script setup>
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { RouterView, RouterLink } from 'vue-router'
+import { RouterView, RouterLink, useRoute } from 'vue-router'
 import LogInView from '@/views/accounts/LoginView.vue'
 import { useCounterStore } from '@/stores/counter'
 import SimpleProfile from './components/profile/SimpleProfile.vue';
 
 const CounterStore = useCounterStore()
+const route = useRoute()
 
+const isActive = (routeName) => {
+  return route.name === routeName
+}
 </script>
 
 <style scoped>
@@ -58,7 +65,21 @@ const CounterStore = useCounterStore()
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.list-group-item.active {
+  background-color: rgb(83, 121, 228) /* 활성화된 아이템 배경색 */
+}
+
 .list-group-item:hover {
-  background-color: #f0f0f0; /* Change to a slightly darker color */
+  background-color: #979191; /* 마우스 오버 시 배경색 변경 */
+}
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border-radius: 10px;
+  padding: 15px;
+  background-color: whitesmoke; /* Magenta color */
 }
 </style>

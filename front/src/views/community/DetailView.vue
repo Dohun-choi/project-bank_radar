@@ -1,36 +1,55 @@
 <template>
-  <div>
-    <table class="table table-striped">
-      <thead>
-        <tr class="table-primary">
-          <th scope="col">idx</th>
-          <th scope="col">title</th>
-          <th scope="col">content</th>
-          <th scope="col">updated_at</th>
-          <th scope="col">좋아요</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>{{ post.id }}</td>
-          <td>{{ post.title }}</td>
-          <td>{{ post.content}}</td>
-          <td> {{ post.updated_at }}</td>
-          <!-- 게시글 좋아요 -->
-          <td> {{post.like_count}}</td>
-        </tr>
-      </tbody>
-      <!-- 게시글 버튼 -->
-      <div>
-      <button @click="deletePost">[DELETE]</button> |
-      <button @click="moveModify">[MODIFY]</button> |
+  <div class="container mt-4">
+    <h3 class="mb-4">게시글 상세 정보</h3>
 
-      <button @click="postLike">{{ post.is_liked ? '[좋아요 취소]' : '[좋아요]' }}</button>
-        <Comments />
+    <div class="info card">
+      <div class="card-header bg-custom text-white">
+        게시글 정보
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <tbody>
+              <tr>
+                <td class="table-header">idx</td>
+                <td>{{ post.id }}</td>
+              </tr>
+              <tr>
+                <td class="table-header">title</td>
+                <td>{{ post.title }}</td>
+              </tr>
+              <tr>
+                <td class="table-header">content</td>
+                <td>{{ post.content}}</td>
+              </tr>
+              <tr>
+                <td class="table-header">updated_at</td>
+                <td>{{ post.updated_at }}</td>
+              </tr>
+              <tr>
+                <td class="table-header">좋아요</td>
+                <td>{{ post.like_count }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
-    <hr>
-    </table>
-    
+
+    <div class="d-flex justify-content-between align-items-center mt-4">
+      <div>
+        <button @click="deletePost" class="btn btn-danger naver-btn">DELETE</button>
+        <button @click="moveModify" class="btn btn-warning naver-btn ml-2">MODIFY</button>
+      </div>
+      <button @click="postLike" class="btn btn-primary naver-btn">
+        {{ post.is_liked ? '좋아요 취소' : '좋아요' }}
+      </button>
+    </div>
+
+    <hr class="my-4">
+
+    <!-- 댓글 컴포넌트 추가 -->
+    <Comments />
   </div>
 </template>
 
@@ -42,27 +61,27 @@ import { useCounterStore } from '@/stores/counter';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Comments from '@/components/community/Comments.vue';
 
-const store = useCounterStore()
-const route = useRoute()
-const router = useRouter()
-const post = ref([])
+const store = useCounterStore();
+const route = useRoute();
+const router = useRouter();
+const post = ref([]);
 
-onMounted(()=>{
+onMounted(() => {
   axios({
-      method: 'GET',
-      url: `${store.API_URL}/api/v1/community/posts/${route.params.id}/`,
-      headers: {
-          Authorization: `Token ${store.token}`
-      }
-    })
-  .then((res)=>{
-      console.log('게시글 세부 정보 가져오기 성공', res.data)
-      post.value = res.data
+    method: 'GET',
+    url: `${store.API_URL}/api/v1/community/posts/${route.params.id}/`,
+    headers: {
+      Authorization: `Token ${store.token}`
+    }
   })
-  .catch((err)=>{
-      console.log('게시글 세부 정보 가져오기 실패', err)
-  }) 
-})
+    .then((res) => {
+      console.log('게시글 세부 정보 가져오기 성공', res.data);
+      post.value = res.data;
+    })
+    .catch((err) => {
+      console.log('게시글 세부 정보 가져오기 실패', err);
+    });
+});
 
 // 게시글 삭제하기
 const deletePost = () => {
@@ -72,42 +91,57 @@ const deletePost = () => {
     headers: {
       Authorization: `Token ${store.token}`
     }
-})
-.then((res)=>{
-  console.log('게시글 삭제 성공')
-  router.push({name: 'ArticleView'})
-})
-.catch((err)=>{
-  console.log('게시글 삭제 실패', err)
-}) 
-}
+  })
+    .then((res) => {
+      console.log('게시글 삭제 성공');
+      router.push({ name: 'ArticleView' });
+    })
+    .catch((err) => {
+      console.log('게시글 삭제 실패', err);
+    });
+};
 
 // 수정 페이지로 이동
-const moveModify = () =>
-  router.push({name: 'ModifyView'})
-
+const moveModify = () => router.push({ name: 'ModifyView' });
 
 // 게시글 좋아요
 const postLike = () => {
   axios({
-        method: 'POST',
-        url: `${store.API_URL}/api/v1/community/posts/${route.params.id}/likes/`,
-        headers: {
-            Authorization: `Token ${store.token}`
-        }
+    method: 'POST',
+    url: `${store.API_URL}/api/v1/community/posts/${route.params.id}/likes/`,
+    headers: {
+      Authorization: `Token ${store.token}`
+    }
+  })
+    .then((res) => {
+      console.log('성공');
+      post.value.is_liked = res.data.isLiked;
+      post.value.like_count = res.data.likeCount;
     })
-.then((res)=>{
-    console.log('성공')
-    post.value.is_liked = res.data.isLiked
-    post.value.like_count = res.data.likeCount
-})
-.catch((err)=>{
-    console.log('실패', err)
-}) 
-}
-
+    .catch((err) => {
+      console.log('실패', err);
+    });
+};
 </script>
 
 <style scoped>
+.info {
+  border: 1px solid #ddd; /* 회색 테두리 */
+  border-radius: 10px; /* 테두리 둥글게 */
+}
 
+.card-header.bg-custom {
+  background-color: rgb(241, 125, 166); /* 마젠타 색상으로 변경 */
+  color: white;
+  font-weight: bold;
+}
+
+.table-header {
+  background-color: rgb(241, 125, 166); /* 마젠타 색상으로 변경 */
+  color: white;
+  font-weight: bold;
+}
+.btn{
+  margin-left: 5px;
+}
 </style>

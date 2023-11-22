@@ -1,52 +1,65 @@
 <template>
-    <div>
-      <!-- 댓글관리 -->
-      <div v-for="comment in post.comment_set" :key="comment.id" :showModify="comment.id">
-        <div>
-          <p>{{ comment.content }}</p>
-          <p>좋아요 수 : {{ comment.like_count }}</p>
-          <button @click="commentLike(comment.id, comment)">
-            {{ comment.is_liked ? '[좋아요 취소]' : '[좋아요]' }}
-          </button>
-  
-          <!-- 댓글 수정 -->
-          <div v-show="comment.showModify">
-            <form @submit.prevent="commentModify(comment.id)">
-              <label for="newContent">코멘트 변경</label>
-              <input type="text" id="newContent" v-model="newContent">
-              <input type="submit" value="수정하기">
-            </form>
-          </div>
-          <button @click="comment.showModify = !comment.showModify">[mod]</button>
-          <!-- 댓글 삭제 -->
-          <button @click="deleteComment(comment.id)">[del]</button>
-          
-          <!-- 대댓글 -->
-          <div v-for="children in comment.children" :key="children.id" >
-            <p> {{ children.content }}</p>
-          </div>
-          <div v-show="comment.showReComment">
-            <form @submit.prevent="createReComment(comment.id, comment)">
-              <label for="reComment">대댓글 달기</label>
-              <input type="text" id="reComment" v-model="reComment">
-              <input type="submit" value="작성">
-            </form>
-          </div>
-            <button @click="comment.showReComment = !comment.showReComment">[reple]</button>
-          
-      </div>
-      </div>
-  
-      <div>
-        <form @submit.prevent="createComment">
-          <label for="comment">댓글 작성</label>
-          <input type="text" id="comment" v-model="comment">
-          <input type="submit" value="[댓글달기]">
-        </form>
-      </div>
-      <button @click="log">log</button>
+  <div>
+
+    <!-- 댓글 작성 -->
+    <div class="create-comment">
+      <form @submit.prevent="createComment">
+        <label for="comment" class="form-label"><strong>댓글 작성</strong></label>
+        <div >
+          <input type="text" id="comment" v-model="comment" class="form-control" placeholder="댓글을 입력해주세요.">
+          <button type="submit" class="btn btn-primary ml-2">댓글달기</button>
+        </div>
+      </form>
     </div>
-  </template>
+    <hr>
+
+    <!-- 댓글 관리 -->
+    <div v-for="(comment, index) in post.comment_set" :key="comment.id" :showModify="comment.id">
+      <div class="comment-container card mb-3">
+        <div class="card-body">
+          <p class="card-text comment-content">
+              <!-- 댓글 번호 -->
+              <b class="comment-number comment-content">#{{ index + 1 }}</b>
+              {{ comment.content }}
+          </p>
+          <p class="card-text like-count">좋아요 : {{ comment.like_count }} 개</p>
+          <button @click="commentLike(comment.id, comment)" class="btn btn-primary">
+            {{ comment.is_liked ? '좋아요 취소' : '좋아요' }}
+          </button>
+
+          <!-- 댓글 수정 -->
+          <div v-show="comment.showModify" class="modify-comment">
+            <form @submit.prevent="commentModify(comment.id)">
+              <label for="newContent" class="form-label">댓글 수정</label>
+              <input type="text" id="newContent" v-model="newContent" class="form-control">
+              <button type="submit" class="btn btn-warning ml-2">수정하기</button>
+            </form>
+          </div>
+          <button @click="comment.showModify = !comment.showModify" class="btn btn-secondary ml-2">{{comment.showModify? '접기' : '수정하기'}}</button>
+          <!-- 댓글 삭제 -->
+          <button @click="deleteComment(comment.id)" class="btn btn-danger ml-2">삭제하기</button>
+
+          <!-- 대댓글 -->
+          <hr>
+          <p>대댓글</p>
+          <div v-for="children in comment.children" :key="children.id" class="re-comment card mb-2">
+            <div class="card-body">
+              <p class="card-text comment-content">{{ children.content }}</p>
+            </div>
+          </div>
+          <div v-show="comment.showReComment" class="create-re-comment">
+            <form @submit.prevent="createReComment(comment.id, comment)">
+              <label for="reComment" class="form-label">대댓글 입력</label>
+              <input type="text" id="reComment" v-model="reComment" class="form-control" placeholder="대댓글을 작성해주세요">
+              <button type="submit" class="btn btn-primary ml-2">작성하기</button>
+            </form>
+          </div>
+          <button @click="comment.showReComment = !comment.showReComment" class="btn btn-secondary ml-2">{{comment.showReComment ? '접기' : '대댓글달기'}}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
   
   <script setup>
   import axios from 'axios';
@@ -193,5 +206,43 @@
   </script>
   
   <style scoped>
-  
+.comment-container {
+  border: 1px solid #ddd;
+}
+
+.like-count {
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+.modify-comment,
+.create-re-comment {
+  margin-top: 10px;
+}
+
+.re-comment {
+  margin-top: 10px;
+}
+
+.create-comment {
+  margin-top: 20px;
+}
+
+.comment-number {
+  margin-left: 10px;
+  color: #555;
+  font-size: 12px;
+}
+
+.inputComment {
+  display: flex;
+  align-items: center;
+}
+
+.create-comment button {
+  margin-top: 10px;
+}
+.btn{
+  margin-right: 5px;
+}
   </style>
