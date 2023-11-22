@@ -3,7 +3,7 @@
     <RouterLink :to="{ name: 'DetailView', params: { id: post.id } }" class="naver-link">
       <div class="post-content">
         <div class="post-header">
-          <span class="post-number">#{{ postNumber }}</span>
+          <span class="post-number">#{{ post.id }}</span>
           <h4 class="post-title">{{ post.title }}</h4>
         </div>
         <p class="post-date">작성(수정)일: {{ post.updated_at.slice(0, 10) }} {{ post.updated_at.slice(11, 16) }}</p>
@@ -18,12 +18,12 @@ import { useCounterStore } from '@/stores/counter';
 import { defineProps } from 'vue';
 
 const props = defineProps({
-    post: Object
+    post: Object,
 })
 
 const post = props.post
 const store = useCounterStore();
-const postNumber = store.posts.findIndex((p) => p.id === post.id) + 1;
+let postNum = 1
 
 </script>
 

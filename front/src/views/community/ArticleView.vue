@@ -32,7 +32,6 @@ import axios from 'axios';
 
 const posts = ref(null)
 const store = useCounterStore()
-
 const API_URL = store.API_URL
 const token = store.token
 
