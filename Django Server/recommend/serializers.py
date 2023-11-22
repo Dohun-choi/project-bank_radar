@@ -8,8 +8,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = '__all__'
-
+        fields = ('nickname', 'birth', 'monthly_income', 'assets')
 
 class TravelSerializer(serializers.ModelSerializer):
     class Meta:

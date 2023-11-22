@@ -128,16 +128,36 @@ def travel_recommand(request, save_period):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_saving_for_travel(request, country):
-    cost = get_object_or_404(Travel, country=country).cost
-    cost //= 1000
-    savings_above_cost = SavingOptions.objects.filter(max_saving_output__gt=cost) \
-    .order_by('save_trm', 'max_saving_output')[:5]
+    monthly_saving = int(request.GET.get('monthly_saving', default=False))
+    if request.GET.get('monthly_saving'):
+        rate = 3
+        intr_rate_type = request.GET.get('intr_rate_type', default='S')
+        period = int(request.GET.get('period'))
 
-    if not savings_above_cost.exists():
-        return Response({'detail' : '선택 기간에 적합한 적금 상품이 존재하지 않습니다.'}, status=status.HTTP_404_NOT_FOUND)
+        if intr_rate_type == 'S':
+            money = (monthly_saving * rate * (period+1)*period//2)//12
+        elif intr_rate_type == 'M':
+            money = (monthly_saving*rate*period//12)
+        
+        savings_above_cost = SavingOptions.objects.filter(max_saving_output__gt=money).order_by('?')[:5]
 
-    serializer = GETDepositOptionsSerializer(savings_above_cost, many=True, context={'request':request})
-    return Response(serializer.data)
+        if not savings_above_cost.exists():
+            return Response({'detail' : '선택 기간에 적합한 적금 상품이 존재하지 않습니다.'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = GetSavingOptionsSerializer(savings_above_cost, many=True, context={'request':request})
+        return Response(serializer.data)
+        
+    else:
+        cost = get_object_or_404(Travel, country=country).cost
+        cost //= 1000
+        savings_above_cost = SavingOptions.objects.filter(max_saving_output__gt=cost) \
+        .order_by('save_trm', 'max_saving_output')[:5]
+
+        if not savings_above_cost.exists():
+            return Response({'detail' : '선택 기간에 적합한 적금 상품이 존재하지 않습니다.'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = GetSavingOptionsSerializer(savings_above_cost, many=True, context={'request':request})
+        return Response(serializer.data)
 
 
 @api_view(['GET'])
