@@ -18,15 +18,6 @@
               <li class="list-group-item">
                 <strong>월 수입:</strong> {{ formatNumber(userInfo.monthly_income) }}원
               </li>
-              <li class="list-group-item" style="background-color: #f8f9fa;">
-                <strong>나이 그룹:</strong> {{ userInfo.age_group }}
-              </li>
-              <li class="list-group-item">
-                <strong>월 수입 그룹:</strong> {{ Math.floor(userInfo.monthly_income_group) }}
-              </li>
-              <li class="list-group-item" style="background-color: #f8f9fa;">
-                <strong>자산 그룹: </strong> {{ userInfo.assets_group }}
-              </li>
             </ul>
   
             <button @click="updateProfile" class="btn btn-primary mt-3" style="background-color: #e5007e; border-color: #e5007e; margin-right: 10px;">프로필 수정</button>

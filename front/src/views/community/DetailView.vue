@@ -24,7 +24,7 @@
               </tr>
               <tr>
                 <td class="table-header">updated_at</td>
-                <td>{{ post.updated_at }}</td>
+                <td>{{ post.updated_at ? post.updated_at.slice(0, 10) : post.updated_at }}</td>
               </tr>
               <tr>
                 <td class="table-header">좋아요</td>
@@ -47,9 +47,26 @@
     </div>
 
     <hr class="my-4">
+    <div class="create-comment">
+      <form @submit.prevent="createComment">
+        <label for="comment" class="form-label"><strong>댓글 작성</strong></label>
+        <div >
+          <input type="text" id="comment" v-model="commentcontent" class="form-control" placeholder="댓글을 입력해주세요.">
+          <button type="submit" class="btn btn-primary ml-2">댓글달기</button>
+        </div>
+      </form>
+    </div>
+    <hr>
 
     <!-- 댓글 컴포넌트 추가 -->
-    <Comments />
+    <Comments v-for="comment in post.comment_set"
+        :comment="comment"
+        :post_pk="post.id"
+        :parent="null"
+        :key="comment.id"
+        :parentname = "null"
+        @delete-comment="removeComment(comment)"/>
+
   </div>
 </template>
 
@@ -65,6 +82,8 @@ const store = useCounterStore();
 const route = useRoute();
 const router = useRouter();
 const post = ref([]);
+const commentcontent = ref('')
+
 
 onMounted(() => {
   axios({
@@ -121,6 +140,40 @@ const postLike = () => {
     .catch((err) => {
       console.log('실패', err);
     });
+};
+
+
+const createComment = () => {
+  const config = {
+      method: 'POST',
+      url: `${store.API_URL}/api/v1/community/posts/${post.value.id}/comments/`,
+      data: {
+        content: commentcontent.value,
+      },
+      headers: {
+        Authorization: `Token ${store.token}`
+      }
+  }
+
+  axios(config)
+  .then((res)=>{
+    console.log('댓글 작성 성공', res.data)
+    post.value.comment_set.push(res.data)
+    commentcontent.value = ''
+  })
+  .catch((err)=>{
+    console.log('댓글 작성 실패', err)
+  }) 
+}
+
+
+
+// 댓글 삭제시 컴포넌트 해제
+const removeComment = (commentToRemove) => {
+  const index = post.value.comment_set.filter((comment) => comment.id !== commentToRemove.id);
+  if (index !== -1) {
+    post.value.comment_set.splice(index, 1);
+  }
 };
 </script>
 
