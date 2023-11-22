@@ -12,7 +12,7 @@
       </RouterLink>
     </div>
     </div>
-    <div class="container, babo" >
+    <div class="container" >
       <div class="row">
         <div class=" col-2">
           <ul class="list-group">
@@ -35,7 +35,8 @@
                 <RouterLink :to="{ name: 'SignUpView' }" style="color: white;" >회원가입</RouterLink>
               </button>
           </div>
-          <SimpleProfile v-if="CounterStore.isLogin"/>
+          <!-- <div v-if="CounterStore.isLogin"><SimpleProfile /></div> -->
+        
         </div>
       </div>
     </div>
@@ -48,7 +49,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { RouterView, RouterLink, useRoute } from 'vue-router'
 import LogInView from '@/views/accounts/LoginView.vue'
 import { useCounterStore } from '@/stores/counter'
-import SimpleProfile from './components/profile/SimpleProfile.vue';
+import SimpleProfile from '@/components/profile/SimpleProfile.vue';
 
 const CounterStore = useCounterStore()
 const route = useRoute()

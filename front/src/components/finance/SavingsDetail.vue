@@ -1,31 +1,30 @@
 <template>
 <div>
+    <div class="product-details">
+    <h3 class="product-title">{{ product.kor_co_nm }} - {{ product.fin_prdt_nm }}</h3>
+    <p class="product-description">{{ product.etc_note }}</p>
+    </div>
+
     <table class="table table-striped">
     <thead>
         <tr class="table-primary">
-        <th scope="col">금융 상품명</th>
-        <th scope="col">금융 회사명</th>
-        <th scope="col">금융 상품 설명</th>
         <th scope="col">가입기간</th>
         <th scope="col">기본 금리</th>
         <th scope="col">최대 금리</th>
         <th scope="col">금리 형식</th>
         <th scope="col">최대 적립금액</th>
-        <th scope="col">좋아요 수(명)</th>
+        <th scope="col">좋아요</th>
         <th scope="col">좋아요(가입)</th>
         </tr>
     </thead>
     <tbody v-for="option in options" :key="option.id">
         <tr>
-        <td>{{ product.fin_prdt_nm }}</td>
-        <td>{{ product.kor_co_nm }}</td>
-        <td>{{ product.etc_note }}</td>
-        <td>{{ option.save_trm }}</td>
-        <td>{{ option.intr_rate }}</td>
-        <td>{{ option.intr_rate2 }}</td>
+        <td>{{ option.save_trm }}개월</td>
+        <td>{{ option.intr_rate }}%</td>
+        <td>{{ option.intr_rate2 }}%</td>
         <td>{{ option.intr_rate_type_nm }}</td>
-        <td>{{ option.max_saving_output }}</td>
-        <td>{{ option.into_count }}</td>
+        <td>{{ formatNumber(option.max_saving_output) }}원</td>
+        <td>{{ option.into_count }}명</td>
         <td>
             <button @click="savingsProductsLike(option)" class="btn btn-custom">
             {{ option.is_into ? '가입 취소' : '가입하기' }}
@@ -46,9 +45,9 @@
     <hr />
     <div class="debates-container p-4 border rounded bg-light">
     <h2 class="text-success font-weight-bold mb-4">투기장</h2>
-    <div v-for="(debate, index) in debates" :key="debate.id" class="card mb-3">
+    <div v-for="(debate, index) in debates" :key="debate.id" class="card mb-3 w-100">
         <div class="card-body">
-        <p class="card-text">#{{ index + 1 }} {{ debate.content }}</p>
+        <p class="card-text">{{ index + 1 }}. {{ debate.content }}</p>
         </div>
     </div>
     </div>
@@ -71,6 +70,7 @@ const options = ref(null);
 
 const product = store.financeSavingsProducts.find((product) => product.fin_prdt_cd === key);
 
+const formatNumber = num => new Intl.NumberFormat().format(num);
 onMounted(() => {
 // 옵션 가져오기
 axios({
@@ -181,8 +181,30 @@ align-items: flex-start;
 }
 
 .card {
-width: 60%;
+width: 100%;
 margin-bottom: 20px;
+}
+
+.product-details {
+padding: 20px;
+border: 1px solid #ddd;
+border-radius: 10px;
+margin-bottom: 5px;
+background-color: #fff;
+width: 100%;
+}
+
+.product-title {
+color: #e5007e; /* Magenta color */
+font-size: 24px;
+font-weight: bold;
+margin-bottom: 10px;
+}
+
+.product-description {
+color: #333;
+font-size: 16px;
+margin-top: 10px;
 }
 
 /* 투기장 타이틀 스타일 */

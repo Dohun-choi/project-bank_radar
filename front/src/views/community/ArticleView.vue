@@ -1,9 +1,11 @@
 <template>
   <div class="article-page-container">
-    <h1 class="text-center mb-4">게시글 페이지</h1>
-    <RouterLink :to="{name: 'CreateView'}" class="btn btn-magenta mb-3">글쓰기</RouterLink>
+    <h1 class="text-center mb-4">자유 게시판</h1>
+    <div class="contain">
+      <Search />
+      <RouterLink :to="{name: 'CreateView'}" class="btn btn-magenta mb-3">글쓰기</RouterLink>
+    </div>
 
-    <Search />
     
     <ArticleList />
 
@@ -25,13 +27,17 @@ onMounted(()=>{
 
 <style scoped>
 .article-page-container {
-  max-width: 600px;
+  max-width: 100%;
   margin: 0 auto;
 }
 
 .btn-magenta {
-  background-color: #e5007e; /* Magenta color */
-  border-color: #e5007e; /* Magenta color */
+  background-color: rgb(241, 125, 166);
+  border-color: rgb(241, 125, 166);
   color: white;
+}
+.contain{
+  display: flex;
+  justify-content: space-between;
 }
 </style>

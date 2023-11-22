@@ -1,43 +1,31 @@
 <template>
   <div>
-    <form @submit.prevent="serach">
-      <label for="search">검색창:</label>
-      <input type="text" id="search" v-model="serach_query">
-      <input type="submit" value="검색하기">
+    <form @submit.prevent="search" class="mt-3">
+      <div class="input-group">
+        <label class="input-group-text" for="search">검색창:</label>
+        <input type="text" id="search" v-model="search_query" class="form-control">
+        <button type="submit" class="btn">검색하기</button>
+      </div>
     </form>
-    {{ result.value }}
   </div>
 </template>
 
 <script setup>
-import axios from 'axios';
 import { ref } from 'vue';
 import { useCounterStore } from '@/stores/counter';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const serach_query = ref('')
+const search_query = ref('')
 const store = useCounterStore()
-const result = ref('')
-const serach = () => {
-  axios({
-    method: 'get',
-    url: `${store.API_URL}/api/v1/community/posts/search/`,
-    data: {
-      params: serach_query.value,
-      serach_query: serach_query.value
-    },
-  })
-  .then((res)=>{
-    console.log('성공', res)
-    result.value = res
-  })
-  .catch((err)=>{
-    console.log('실패', err)
-  })
+const search = () => {
+  store.search(search_query.value)
 }
-
 </script>
 
 <style scoped>
-
+.btn{
+  background-color: rgb(241, 125, 166);
+  border-color: rgb(241, 125, 166);
+  color: white;
+}
 </style>
