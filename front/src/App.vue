@@ -35,7 +35,9 @@
                 <RouterLink :to="{ name: 'SignUpView' }" style="color: white;" >회원가입</RouterLink>
               </button>
           </div>
-          <!-- <div v-if="CounterStore.isLogin"><SimpleProfile /></div> -->
+          <div v-if="CounterStore.isLogin">
+            <SimpleProfile />
+        </div>
         
         </div>
       </div>

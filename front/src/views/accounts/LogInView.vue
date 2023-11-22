@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-5">
+  <div>
     <div class="row justify-content-center">
       <div class="col-md-6">
         <h1 class="text-center mb-4" style="color: #e5007e;">Login</h1>

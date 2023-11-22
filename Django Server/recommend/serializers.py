@@ -8,7 +8,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ('nickname', 'birth', 'monthly_income', 'assets')
+        exclude = ('age_group', 'monthly_income_group', 'assets_group',)
 
 class TravelSerializer(serializers.ModelSerializer):
     class Meta:

@@ -3,13 +3,13 @@
     <div class="card p-4 custom-card">
       <a href="" @click.prevent="toProfile" class="list-group-item custom-link">
         <i class="bi bi-person"></i> 
-        <p class="custom-text">'{{ userInfo.nickname }}'님
+        <p class="custom-text">'{{ userInfo?.nickname }}'님
           <br>반갑습니다.</p>
       </a>
 
-      <template v-if="matchesTodayDate(userInfo.birth)">
+      <template v-if="matchesTodayDate(userInfo?.birth)">
         <p class="custom-text">
-          <i class="bi bi-cake"></i> {{ userInfo.nickname }}님의 {{ userInfo.age }}번째 생일을 축하드립니다!
+          <i class="bi bi-cake"></i> {{ userInfo?.nickname }}님의 {{ userInfo?.age }}번째 생일을 축하드립니다!
         </p>
       </template>
 
