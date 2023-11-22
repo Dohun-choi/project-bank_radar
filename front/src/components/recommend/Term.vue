@@ -1,6 +1,6 @@
 <template>
 <div class="container mt-5">
-    <h3 class="title mb-3">저축기간에 따라 상품 추천받기</h3>
+    <h3 class="title mb-3">저축기간에 따라 여행지 추천받기</h3>
 
     <form @submit.prevent="searchTravel" class="mb-3 d-flex">
     <select v-model="selectedPeriod" class="form-select mr-2">

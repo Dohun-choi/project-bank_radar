@@ -1,42 +1,18 @@
 <template>
   <div class="container mt-4">
-    <h3 class="mb-4">게시글 상세 정보</h3>
 
     <div class="info card">
-      <div class="card-header bg-custom text-white">
-        게시글 정보
-      </div>
-      <div class="card-body">
-        <div class="table-responsive">
-          <table class="table table-bordered">
-            <tbody>
-              <tr>
-                <td class="table-header">idx</td>
-                <td>{{ post.id }}</td>
-              </tr>
-              <tr>
-                <td class="table-header">title</td>
-                <td>{{ post.title }}</td>
-              </tr>
-              <tr>
-                <td class="table-header">content</td>
-                <td>{{ post.content}}</td>
-              </tr>
-              <tr>
-                <td class="table-header">updated_at</td>
-                <td>{{ post.updated_at }}</td>
-              </tr>
-              <tr>
-                <td class="table-header">좋아요</td>
-                <td>{{ post.like_count }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
 
-    <div class="d-flex justify-content-between align-items-center mt-4">
+      <div class="card-header bg-custom text-white">
+        <p>{{post.title}}</p>
+        <p>추천({{post.like_count }})</p>
+      </div>
+
+      <div class="card-body">
+        {{ post.content }}
+      </div>
+      
+      <div class="d-flex justify-content-between align-items-center mt-4">
       <div>
         <button @click="deletePost" class="btn btn-danger naver-btn">DELETE</button>
         <button @click="moveModify" class="btn btn-warning naver-btn ml-2">MODIFY</button>
@@ -44,7 +20,12 @@
       <button @click="postLike" class="btn btn-primary naver-btn">
         {{ post.is_liked ? '좋아요 취소' : '좋아요' }}
       </button>
+
+      </div>
+
     </div>
+
+
 
     <hr class="my-4">
 
@@ -126,22 +107,27 @@ const postLike = () => {
 
 <style scoped>
 .info {
-  border: 1px solid #ddd; /* 회색 테두리 */
   border-radius: 10px; /* 테두리 둥글게 */
+  width: 100%;
+  height: 15%;
+  border: 1px solid rgb(241, 125, 166);
 }
 
 .card-header.bg-custom {
-  background-color: rgb(241, 125, 166); /* 마젠타 색상으로 변경 */
+  display: flex;
+  justify-content: space-between;
+  background-color: rgb(241, 125, 166); 
   color: white;
   font-weight: bold;
 }
 
 .table-header {
-  background-color: rgb(241, 125, 166); /* 마젠타 색상으로 변경 */
+  background-color: rgb(241, 125, 166); 
   color: white;
   font-weight: bold;
 }
+
 .btn{
-  margin-left: 5px;
+  margin: 5px;
 }
 </style>

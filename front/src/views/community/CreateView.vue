@@ -64,8 +64,8 @@ border-color: #ff69b4; /* 딸기우유 색상 */
 }
 
 .btn-danger:hover {
-background-color: #ff0080; /* 진한 딸기우유 색상 */
-border-color: #ff0080; /* 진한 딸기우유 색상 */
+background-color: rgb(241, 125, 166); /* 진한 딸기우유 색상 */
+border-color: rgb(241, 125, 166); /* 진한 딸기우유 색상 */
 }
 .custom-heading {
 color: #ff69b4; /* 딸기우유 색상 */

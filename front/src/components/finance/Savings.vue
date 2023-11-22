@@ -22,7 +22,8 @@
             <th scope="col">금융상품명</th>
             <th scope="col">담당은행</th>
             <th scope="col">가입제한</th>
-            <th scope="col">최고한도(원)</th>
+            <th scope="col">최고한도</th>
+            <th scope="col">좋아요</th>
         </tr>
         </thead>
         <tbody>
@@ -33,7 +34,8 @@
             <td v-if="product.join_deny === 1">제한 없음</td>
             <td v-if="product.join_deny === 2">서민 전용</td>
             <td v-if="product.join_deny === 3">일부 제한</td>
-            <td>{{ formatNumber(product.max_limit) }}</td>
+            <td>{{ product.max_limit? formatNumber(product.max_limit) : '-' }} </td>
+            <td>{{ product.into_count }}명</td>
         </tr>
         </tbody>
     </table>
