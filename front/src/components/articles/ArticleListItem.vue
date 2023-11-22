@@ -17,7 +17,11 @@
 import { useCounterStore } from '@/stores/counter';
 import { defineProps } from 'vue';
 
-const { post } = defineProps(['post']);
+const props = defineProps({
+    post: Object
+})
+
+const post = props.post
 const store = useCounterStore();
 const postNumber = store.posts.findIndex((p) => p.id === post.id) + 1;
 
