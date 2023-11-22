@@ -166,3 +166,5 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 API_KEY_EXCHANGE = env('API_KEY_exchange')
 API_KEY_FIN_PRD = env('API_KEY_financial_product')
+API_KEY_NAVER = env('API_KEY_naver')
+NAVER_SECRET = env('NAVER_SECRET')

@@ -52,3 +52,4 @@ class Travel(models.Model):
     country = models.TextField(unique=True)
     when = models.TextField()
     cost = models.IntegerField()
+    img_url = models.TextField(null=True)

@@ -14,9 +14,9 @@
 
     <div class="row">
     <div v-for="(recommend, index) in travelDestinations" :key="recommend.id" class="col-md-4 mb-3">
-        <a class="no-decoration" href="https://www.australia.com/ko-kr?cid=paid-search%7cko%7cSYD701%7cbrand%7cGoogle%7c%7c%7c%7c%7c%7c%7c%7c%7c%7c&ef_id=CjwKCAiAx_GqBhBQEiwAlDNAZn15q-1El_3sUSuGKMeCpSdwue4TQtDMVKB7dG5XjMQ-OzgA5kRr5BoCDg4QAvD_BwE:G:s&s_kwcid=AL!4635!3!499116948237!b!!g!!%252B%25ED%2598%25B8%25EC%25A3%25BC%2520%252B%25EA%25B4%2580%25EA%25B4%2591%25EC%25B2%25AD!11310016704!113927886674&utm_actcampaign=11310016704&gad_source=1">
+        <a class="no-decoration" :href="`https://www.google.co.kr/search?q=${recommend.country}`" target="_blank">
         <div class="card" @click="goSavingsDetail(recommend.fin_prdt_cd)">
-        <img src="@/assets/evo.png" class="card-img-top" alt="Product Image">
+        <img :src="recommend.img_url" class="card-img-top" alt="Product Image">
         <div class="card-body">
             <h5 class="card-title">{{ index + 1 }}번째 추천 여행지</h5>
             <p class="card-text">국가명: {{ recommend.country }}</p>
@@ -58,9 +58,17 @@ const searchTravel = () => {
         }
     }
 
-    if (typeof monthly.value === 'number' && monthly.value > 10000) {
+    if (monthly.value && typeof monthly.value !== 'number') {
+        return alert('숫자를 입력해 주세요')
+    } else if (monthly.value && monthly.value < 99) {
+        return alert('너무 작은 숫자입니다.')
+    }
+
+    if (typeof monthly.value === 'number' && monthly.value >= 100) {
         config.params.monthly_saving = monthly.value
     }
+
+
 
     axios(config)
     .then((res) => {

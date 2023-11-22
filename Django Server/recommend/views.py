@@ -1,5 +1,7 @@
 from datetime import date
 
+import requests
+
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -12,6 +14,10 @@ from .models import UserProfile, Travel
 from .serializers import UserProfileSerializer, TravelSerializer, CountrySerializer
 from fin_product.models import DepositOptions, SavingOptions
 from fin_product.serializers import GETDepositOptionsSerializer, GetSavingOptionsSerializer
+from django.conf import settings
+
+API_key = settings.API_KEY_NAVER
+secret = settings.NAVER_SECRET
 
 @api_view(['GET', 'PUT'])
 @permission_classes([IsAuthenticated])
@@ -111,7 +117,7 @@ def travel_recommand(request, save_period):
         elif intr_rate_type == 'M':
             money = (monthly_saving*rate*save_period//12)
         
-        country = Travel.objects.filter(cost__lt=money).order_by('-cost')[:5]
+        country = Travel.objects.filter(cost__lt=money).order_by('?')[:5]
 
         if not country.exists():
             return Response({'detail' : '선택 기간에 적합한 여행지 상품이 존재하지 않습니다.'}, status=status.HTTP_404_NOT_FOUND)
@@ -136,7 +142,7 @@ def travel_recommand(request, save_period):
     recommend_travel_place = Travel.objects.filter(
         Q(when__contains=date_after_a_month)
         & Q(cost__lte=maximum_saving_output)
-    )
+    ).order_by('?')
     
     if not recommend_travel_place.exists():
         return Response({'detail' : '선택 기간에 이후에 적합한 여행지가 존재하지 않습니다.'}, status=status.HTTP_404_NOT_FOUND)
@@ -167,3 +173,32 @@ def get_country(request):
     countries = get_list_or_404(Travel)
     serializer = CountrySerializer(countries, many=True)
     return Response(serializer.data)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def get_img_url(request):
+    # return Response({'detail': '이미 완료된 업데이트'})
+    countries = get_list_or_404(Travel)
+
+    for country in countries:
+        url = f'https://openapi.naver.com/v1/search/image'
+        headers = {
+            'X-Naver-Client-Id' : API_key,
+            'X-Naver-Client-Secret':secret
+        }
+
+        params = {
+            'query' : f'{country.country}',
+            'display': 10,
+            'sort':'date',
+            'start': 2,
+            'filter' : 'medium'
+        }
+        
+        response = requests.get(url, headers=headers, params=params).json()
+        print(response)
+        country.img_url = response['items'][0]['link']
+        country.save()
+    
+    return Response(status=status.HTTP_201_CREATED)

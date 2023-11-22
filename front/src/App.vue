@@ -2,18 +2,16 @@
   <div>
     <div class="title">
     
-    <div class="container">
-    </div>
     <nav class="navbar navbar-expand-xl navbar-light">
-  <div class="container-fluid">
+  <div class="container">
     <!-- 네비게이션 로고 또는 브랜드 -->
-    <RouterLink :to="{ name: 'MainView' }" class="list-group-item col" style="display:inline-block">
-        <img src="@/assets/BankRadar_favicon.png" style="height: 80px; widows: 80px;"  alt="로고">
+    <span>
+    <RouterLink :to="{ name: 'MainView' }" class="list-group-item col">
+        <img src="@/assets/BankRadar_favicon.png" style="height: 80px; widows: 80px;" align="right"  alt="로고">
     </RouterLink>
-
+</span>
     <RouterLink :to="{ name: 'MainView' }" class="list-group-item col" style="display:inline-block">
-        <h1 style="color: lab(46.05 58.95 17.38);">Bank Radar
-          <small class="text-body-secondary" style="display: block;">여행을 위한 저축</small>
+        <h1>Bank Radar
         </h1>
       </RouterLink>
     <!-- 햄버거 메뉴 아이콘 - 모바일에서 보일 때 -->
@@ -83,8 +81,6 @@
 
         <RouterView class="col-lg-10"/>
 
-        
-
       </div>
     </div>
 
@@ -116,10 +112,6 @@ const isActive = (routeName) => {
 
 .list-group-item.active {
   background-color: rgb(83, 121, 228) /* 활성화된 아이템 배경색 */
-}
-
-.list-group-item:hover {
-  background-color: #979191; /* 마우스 오버 시 배경색 변경 */
 }
 
 .login-container {

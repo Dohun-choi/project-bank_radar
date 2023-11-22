@@ -37,31 +37,38 @@
     </div>
 
     <!-- Carousel -->
-    <div id="carouselExampleIndicators" class="carousel slide mb-4" data-ride="carousel">
-      <ol class="carousel-indicators">
-        <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-        <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-        <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-      </ol>
-      <div class="carousel-inner">
-        <div class="carousel-item active">
-          <img src="@/assets/test2.jpg" class="d-block w-100 rounded" alt="First slide">
+    <div id="carouselExampleAutoplaying" class="carousel slide mb-3" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+            <img src="https://images.pexels.com/photos/1004584/pexels-photo-1004584.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" class="d-block w-100" alt="...">
+            </div>
+            <div class="carousel-item">
+            <img src="https://images.pexels.com/photos/1285625/pexels-photo-1285625.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" class="d-block w-100" alt="...">
+            </div>
+            <div class="carousel-item">
+            <img src="https://images.pexels.com/photos/2087391/pexels-photo-2087391.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" class="d-block w-100" alt="...">
+            </div>
+            <div class="carousel-item">
+            <img src="https://images.pexels.com/photos/417344/pexels-photo-417344.jpeg" class="d-block w-100" alt="...">
+            </div>
+            <div class="carousel-item">
+            <img src="https://images.pexels.com/photos/441379/pexels-photo-441379.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" class="d-block w-100" alt="...">
+            </div>
+            <div class="carousel-item">
+            <img src="https://images.pexels.com/photos/161401/fushimi-inari-taisha-shrine-kyoto-japan-temple-161401.jpeg" class="d-block w-100" alt="...">
+            </div>
+            <div class="carousel-item">
+            <img src="https://images.pexels.com/photos/1121782/pexels-photo-1121782.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" class="d-block w-100" alt="...">
+            </div>
         </div>
-        <div class="carousel-item">
-          <img src="@/assets/test3.jpg" class="d-block w-100 rounded" alt="Second slide">
-        </div>
-        <div class="carousel-item">
-          <img src="@/assets/test4.jpg" class="d-block w-100 rounded" alt="Third slide">
-        </div>
-      </div>
-      <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="sr-only">Previous</span>
-      </a>
-      <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="sr-only">Next</span>
-      </a>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
     </div>
 
     <!-- Footer -->
@@ -72,7 +79,10 @@
 </template>
 
 <script setup>
+import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+
+
 </script>
 
 <style scoped>

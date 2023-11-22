@@ -4,12 +4,11 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
-from django.shortcuts import get_list_or_404, get_object_or_404
+from django.shortcuts import get_object_or_404
 from django.db.models import Count
 
 from .models import Post, Comment, Notify
 from .serializers import PostListSerializer, PostSerializer, NestedCommentSerializer, NotifySerializer
-
 
 
 def create_notify(post_user, post_pk, parent_user, data, writer_pk):

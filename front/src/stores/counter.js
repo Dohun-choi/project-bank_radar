@@ -40,7 +40,6 @@ const isLogin = computed(()=>{
       .then((res)=>{
           console.log('로그인 성공', res.data)
           
-          alert('로그인 되었습니다.')
           // 로그인 시 전부 로딩
           token.value = res.data.key // 토큰
           getProfile() // 8. 프로필 가져오기
@@ -48,11 +47,12 @@ const isLogin = computed(()=>{
           getFinanceDepositsProducts() // 4. 예금 정보 가져오기
           getFinanceSavingsProducts () // 5. 적금 정보 가져오기
 
-          router.push({name: 'ArticleView'})
+          router.push({name: 'MainView'})
   
       })
       .catch((err)=>{
           console.log('로그인 실패', err)
+          alert('틀린 비밀번호이거나 존재하지 않는 아이디입니다.')
       })
       }
   
@@ -134,6 +134,7 @@ const isLogin = computed(()=>{
       token.value = null
       profileInfo.value = null
       localStorage.clear()
+      alert('로그아웃 되었습니다.')
   }
   
   // 8. 프로필 받아오기
