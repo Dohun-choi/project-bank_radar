@@ -34,6 +34,8 @@
     <h2 style="color: #e5007e;">가입한 상품 금리</h2>
     <canvas ref="myChart"></canvas>
     </div>
+
+    <button @click="btn">btn</button>
 </div>
 </template>
 
@@ -52,6 +54,11 @@ const myChart = ref(null);
 const FinPrdtNm = ref(null);
 const IntrRate = ref(null);
 const IntrRate2 = ref(null);
+
+const btn = () => {
+    savingsList.value[0] += 1
+    console.log(savingsList.value)
+}
 
 onMounted(async () => {
 try {
@@ -100,39 +107,41 @@ acc.push(cur.intr_rate2);
 return acc;
 }, IntrRate2.value);
 
-const chartData = {
-labels: FinPrdtNm.value,
-datasets: [
-{
-    label: '저축 금리',
-    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-    borderColor: 'rgba(75, 192, 192, 1)',
-    borderWidth: 1,
-    data: IntrRate.value,
-},
-{
-    label: '최고 우대금리',
-    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-    borderColor: 'rgba(255, 99, 132, 1)',
-    borderWidth: 1,
-    data: IntrRate2.value,
-},
-],
-};
-const ctx = myChart.value.getContext('2d');
-
-new Chart(ctx, {
-type: 'bar',
-data: chartData,
-options: {
-scales: {
-    y: {
-    beginAtZero: true,
+    const chartData = {
+    labels: FinPrdtNm.value,
+    datasets: [
+    {
+        label: '저축 금리',
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1,
+        data: IntrRate.value,
     },
-},
-},
+    {
+        label: '최고 우대금리',
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 1,
+        data: IntrRate2.value,
+    },
+    ],
+    };
+    const ctx = myChart.value.getContext('2d');
+
+    new Chart(ctx, {
+    type: 'bar',
+    data: chartData,
+    options: {
+    scales: {
+        y: {
+        beginAtZero: true,
+        },
+    },
+    },
+    });
 });
-});
+
+
 
 const goSavingsDetail = (key) => {
 router.push({

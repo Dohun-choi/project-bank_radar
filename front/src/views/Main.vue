@@ -46,32 +46,42 @@
         </button>
     </div>
 
-        <!-- Main Service Section -->
-    <div class="row card cardbox">
-        <h3 class="card-header">이런 사람들에게 추천해요</h3>
-        <div class="card rounded col-md-4 gx-3 px-3">
-          <div class="card-body">
-            <h5 class="card-title">여행을 즐기며 돈도 아끼는 특별한 방법을 찾는 사람들</h5>
-            <p class="card-text">여행을 즐기면서 돈을 아끼고 싶어하는 분들을 위해 Bank Radar가 특별한 저축 상품을 제안해요.</p>
+      <!-- Main Service Section -->
+      <div class="row custom-style-cardbox">
+        <h3 class="card-header text-center">이런 사람들에게 추천해요!</h3>
+
+        <div class="col-md-4 mb-4">
+          <div class="card border rounded h-100 custom-style-card">
+            <div class="card-body">
+              <h5 class="card-title">💸 여행을 원하지만 비용 걱정으로 망설이는 사람들</h5>
+              <p class="card-text">여행은 하고 싶지만 비용 때문에 망설이는 분들을 위해, Bank Radar가 여행 비용과 적금 상품을 추천하여 여행 계획을 지원해드려요.</p>
+            </div>
           </div>
         </div>
-        <div class="card rounded col-md-4 gx-3 px3">
-          <div class="card-body">
-            <h5 class="card-title">적금 만기 후 여행을 계획하는 사람들</h5>
-            <p class="card-text">적금이 만기를 맞은 후 여행을 꿈꾸는 분들을 위해, Bank Radar가 여행지 추천을 도와줘요.</p>
+
+        <div class="col-md-4 mb-4">
+          <div class="card border rounded h-100 custom-style-card">
+            <div class="card-body">
+              <h5 class="card-title">🌍 여행을 즐기며 돈도 아끼는 특별한 방법</h5>
+              <p class="card-text">여행을 즐기면서 돈을 아끼고 싶어하는 분들을 위해 Bank Radar가 특별한 저축 상품을 제안해요.</p>
+            </div>
           </div>
-      </div>
-        <div class="card rounded col-md-4 gx-3 px3">
-          <div class="card-body">
-            <h5 class="card-title">여행을 원하지만 비용 걱정으로 망설이는 사람들</h5>
-            <p class="card-text">여행은 하고 싶지만 비용 때문에 망설이는 분들을 위해, Bank Radar가 여행 비용과 적금 상품을 추천하여 여행 계획을 지원해드려요.</p>
+        </div>
+
+        <div class="col-md-4 mb-4">
+          <div class="card border rounded h-100 custom-style-card">
+            <div class="card-body">
+              <h5 class="card-title">🌟 적금 만기 후 여행을 계획하는 사람들</h5>
+              <p class="card-text">적금이 만기를 맞은 후 여행을 꿈꾸는 분들을 위해, Bank Radar가 여행지 추천을 도와줘요.</p>
+            </div>
           </div>
+        </div>
+
       </div>
     </div>
-
-</div>
   </div>
 </template>
+
 
 <script setup>
 import 'bootstrap';
@@ -82,18 +92,43 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 <style scoped>
 /* 페이지 특정 스타일은 여기에 추가 */
-.row {
-  margin-left: -15px;
-  margin-right: -15px;
+.custom-style-cardbox {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  background-color: aliceblue;
+  padding: 20px;
+  border-radius: 15px;
 }
 
-.card {
-  margin-bottom: 2rem;
+.custom-style-card {
+  border: none;
+}
+.custom-style-card:hover {
+  border: 3px solid #3E4095; /* 테두리 색상 변경 */
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3); /* 그림자 효과 추가 */
+  transform: scale(1.05); /* 크기 약간 늘리기 */
 }
 
-.carousel-item img {
-  height: 400px;
-  object-fit: cover;
+.custom-style-card .card-body {
+  text-align: center;
+}
+
+.custom-style-card .card-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  height: 30%;
+}
+
+.custom-style-card .card-text {
+  font-size: 1rem;
+}
+
+.card-header {
+  color: black;
+  margin-bottom: 10px;
+  font-weight: bold;
 }
 
 .jumbotron,
@@ -101,5 +136,4 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 .footer {
   border-radius: 15px;
 }
-
 </style>

@@ -101,9 +101,6 @@ const fetchPosts = async () => {
     const response = await axios({
       method: 'get',
       url: `${API_URL}/api/v1/community/posts/`,
-      headers: {
-        Authorization: `Token ${token}`
-      }
     });
     
     if (response.status === 200) {
