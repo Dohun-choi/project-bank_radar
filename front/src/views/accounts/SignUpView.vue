@@ -34,9 +34,11 @@ import { ref } from 'vue';
 import { useCounterStore } from '@/stores/counter';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
+import { useRouter } from 'vue-router';
 
 const store = useCounterStore();
 const API_URL = store.API_URL
+const router = useRouter()
 
 const username = ref(null);
 const password1 = ref(null);

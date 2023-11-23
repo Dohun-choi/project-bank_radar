@@ -24,7 +24,7 @@ class Post(models.Model):
 class Comment(MPTTModel):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comment_set')
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='replies')
-    content = models.CharField(max_length=150)
+    content = models.CharField(max_length=200)
     like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="like_comment")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="comment_writer", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -39,3 +39,4 @@ class Notify(models.Model):
     content = models.TextField()
     id_of_content = models.IntegerField()
     read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)

@@ -17,13 +17,16 @@
       <div class="d-flex justify-content-between align-items-center mt-4">
         <template v-if="store.profileInfo?.id === post.user">
       <div>
-        <button @click="deletePost" class="btn btn-danger naver-btn">DELETE</button>
-        <button @click="moveModify" class="btn btn-warning naver-btn ml-2">MODIFY</button>
+        <button @click="deletePost" class="btn btn-danger naver-btn">삭제</button>
+        <button @click="moveModify" class="btn btn-warning naver-btn ml-2">수정</button>
       </div>
 
     </template>
-      <button @click="postLike" class="btn btn-primary naver-btn">
-        {{ post.is_liked ? '좋아요 취소' : '좋아요' }}
+      <button v-if="isLogin" @click="postLike" :class="{
+      'btn': true,
+      'btn-info': post.is_liked,
+      'btn-outline-info': !post.is_liked
+    }">💕
       </button>
 
       </div>
@@ -31,12 +34,14 @@
     </div>
 
     <hr class="my-4">
-    <div class="create-comment">
+    <div v-if="isLogin" class="create-comment">
       <form @submit.prevent="createComment">
-        <label for="comment" class="form-label"><strong>댓글 작성</strong></label>
-        <div >
-          <input type="text" id="comment" v-model="commentcontent" class="form-control" placeholder="댓글을 입력해주세요.">
-          <button type="submit" class="btn btn-primary ml-2">댓글달기</button>
+        <label for="comment" class="form-label"><strong>댓글 {{ post.comment_count }}개</strong></label>
+        <div>
+          <input type="text" id="comment" v-model="commentcontent" class="form-control" placeholder="댓글을 입력해주세요." maxlength="200">
+          <p v-if="commentcontent.length >= 200" style="color: red;">최대 200글자까지 입력가능합니다.</p>
+          {{ commentcontent.length }} / 200
+          <button type="submit" class="btn btn-primary ml-2" style="float: right; display: block;">댓글달기</button>
         </div>
       </form>
     </div>
@@ -67,6 +72,7 @@ const route = useRoute();
 const router = useRouter();
 const post = ref([]);
 const commentcontent = ref('')
+const isLogin = store.isLogin
 
 
 onMounted(() => {
@@ -92,6 +98,8 @@ onMounted(() => {
 
 // 게시글 삭제하기
 const deletePost = () => {
+    const confirmed = confirm('정말 게시글을 삭제하시겠습니까?');
+    if (confirmed) {
   axios({
     method: 'DELETE',
     url: `${store.API_URL}/api/v1/community/posts/${route.params.id}/`,
@@ -105,7 +113,8 @@ const deletePost = () => {
     })
     .catch((err) => {
       console.log('게시글 삭제 실패', err);
-    });
+    })
+}
 };
 
 // 수정 페이지로 이동
@@ -139,6 +148,11 @@ const postLike = () => {
 
 
 const createComment = () => {
+    if (commentcontent.value.length==0) {
+        return alert('내용을 입력해 주세요')
+    } else if (commentcontent.value.length>200) {
+        return alert('내용은 200자를 넘어갈 수 없습니다.')
+    }
   const config = {
       method: 'POST',
       url: `${store.API_URL}/api/v1/community/posts/${post.value.id}/comments/`,
@@ -196,5 +210,28 @@ const removeComment = (commentToRemove) => {
 
 .btn{
   margin: 5px;
+}
+
+.btn-danger {
+  background-color: rgb(220,53,69);
+  border: rgb(220,53,69) 1px;
+}
+
+.btn-danger:hover {
+  background-color: red;
+  border: red 1px;
+}
+
+.btn-info {
+  background-color: rgb(241, 125, 166);
+  border: rgb(241, 125, 166) solid 1px;
+}
+.btn-outline-info {
+    border: rgb(241, 125, 166) solid 1px;
+}
+
+.btn-outline-info:hover {
+    border: rgb(255, 182, 208) solid 1px;
+    background-color: rgb(255, 182, 208);
 }
 </style>

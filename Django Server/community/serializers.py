@@ -83,6 +83,7 @@ class PostSerializer(serializers.ModelSerializer):
     like_count = serializers.IntegerField(source='like_users.count', read_only=True)
     is_liked = serializers.SerializerMethodField(method_name='has_liked', read_only=True)
     profile = serializers.SerializerMethodField(method_name='get_user_profile')
+    comment_count = serializers.IntegerField(source='comment_set.count', read_only=True)
 
     class Meta:
         model = Post

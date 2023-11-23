@@ -5,11 +5,15 @@
         <h3 class="custom-heading">게시글 내용 수정</h3>
 
         <label for="title" class="form-label">제목 변경</label>
-        <input type="text" id="title" v-model="title" class="form-control">
+        <input type="text" id="title" v-model="title" class="form-control" maxlength="50" placeholder="제목">
+        <p>{{ title.length }} / 50</p>
+        <p v-if="title.length >= 50" style="color: red;">제목은 최대 50글자까지 입력가능합니다.</p>
     </div>
     <div class="mb-3">
         <label for="content" class="form-label">내용 변경</label>
-        <input type="text" id="content" v-model="content" class="form-control">
+        <textarea v-model.trim="content" id="content" class="form-control" placeholder="내용"></textarea>
+        <p>{{ content.length }} / 1500</p>
+        <p v-if="content.length >= 1500" style="color: red;">내용은 최대 1500글자까지 입력가능합니다.</p>
     </div>
     <input type="submit" value="수정하기" class="btn btn-danger">
     </form>
@@ -30,25 +34,35 @@ const title = ref(query.title);
 const content = ref(query.content);
 
 const modify = () => {
-axios({
-    method: 'PUT',
-    url: `${store.API_URL}/api/v1/community/posts/${route.params.id}/`,
-    data: {
-    title: title.value ? title.value : query.title,
-    content: content.value ? content.value : query.content,
-    },
-    headers: {
-    Authorization: `Token ${store.token}`,
-    },
-})
-    .then((res) => {
-    console.log('성공');
-    router.push({ name: 'DetailView' });
+    if (title.value.length === 0) {
+    return alert('제목을 입력하세요')
+  } else if (title.value.length > 50) {
+    return alert('제목은 최대 50글자까지 입력가능합니다.')
+  } else if (content.value.length === 0) {
+    return alert('내용을 입력하세요')
+  } else if (content.value.length > 1500) {
+    return alert('내용은 최대 1500글자까지 입력가능합니다.')
+  } else {
+    axios({
+        method: 'PUT',
+        url: `${store.API_URL}/api/v1/community/posts/${route.params.id}/`,
+        data: {
+        title: title.value ? title.value : query.title,
+        content: content.value ? content.value : query.content,
+        },
+        headers: {
+        Authorization: `Token ${store.token}`,
+        },
     })
-    .catch((err) => {
-    console.log('실패', err);
-    });
-};
+        .then((res) => {
+        console.log('성공');
+        router.push({ name: 'DetailView' });
+        })
+        .catch((err) => {
+        console.log('실패', err);
+        });
+    }
+    };
 </script>
 
 <style scoped>

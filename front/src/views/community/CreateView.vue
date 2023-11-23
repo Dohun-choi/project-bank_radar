@@ -5,11 +5,15 @@
     <form @submit.prevent="createPost" class="custom-form">
       <div class="mb-3">
         <label for="title" class="form-label">제목:</label>
-        <input type="text" v-model.trim="title" id="title" class="form-control">
+        <input type="text" v-model.trim="title" id="title" class="form-control" maxlength="50" placeholder="제목">
+        <p>{{ title.length }} / 50</p>
+        <p v-if="title.length >= 50" style="color: red;">제목은 최대 50글자까지 입력가능합니다.</p>
       </div>
       <div>
         <label for="content" class="form-label">내용:</label>
-        <textarea v-model.trim="content" id="content" class="form-control"></textarea>
+        <textarea v-model.trim="content" id="content" class="form-control" placeholder="내용"></textarea>
+        <p>{{ content.length }} / 1500</p>
+        <p v-if="content.length >= 1500" style="color: red;">내용은 최대 1500글자까지 입력가능합니다.</p>
       </div>
       <input type="submit" class="btn btn-danger">
     </form>
@@ -24,12 +28,21 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const title = ref(null)
-const content = ref(null)
+const title = ref('')
+const content = ref('')
 const router = useRouter()
 const store = useCounterStore()
 
 const createPost = ()=>{
+  if (title.value.length === 0) {
+    return alert('제목을 입력하세요')
+  } else if (title.value.length > 50) {
+    return alert('제목은 최대 50글자까지 입력가능합니다.')
+  } else if (content.value.length === 0) {
+    return alert('내용을 입력하세요')
+  } else if (content.value.length > 1500) {
+    return alert('내용은 최대 1500글자까지 입력가능합니다.')
+  } else {
   axios({
     method: 'post',
     url: `${store.API_URL}/api/v1/community/posts/`,
@@ -49,6 +62,7 @@ const createPost = ()=>{
     console.log('실패', err)
     console.log(store.token)
   })
+}
 }
 
 

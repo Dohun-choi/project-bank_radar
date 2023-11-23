@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from django.utils import timezone
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
@@ -16,7 +17,7 @@ from .serializers import PostListSerializer, PostSerializer, NestedCommentSerial
 def create_notify(post_user, post_pk, parent_user, data, writer_pk):
     if writer_pk != post_user.pk:
         Notify.objects.create(user=post_user, content=data, id_of_content=post_pk)
-    if parent_user is not None and parent_user.pk != writer_pk:
+    if parent_user is not None and parent_user.pk != writer_pk and post_user != parent_user:
         Notify.objects.create(user=parent_user, content=data, id_of_content=post_pk)
 
 
@@ -152,11 +153,15 @@ def comment_like(request, comment_pk):
 @permission_classes([IsAuthenticated])
 def get_notifies(request):
     notifies = Notify.objects.filter(user=request.user)
-    for notify in notifies:
+    serializer = NotifySerializer(notifies, many=True)
+
+    for notify in notifies[::-1]:
         if not notify.read:
             notify.read = True
             notify.save()
-    serializer = NotifySerializer(notifies, many=True)
+        else:
+            break
+
     return Response(serializer.data)
 
 

@@ -86,6 +86,6 @@ const toNotify = () => {
 
 <style scoped>
 .custom-text {
-  font-size: 2vw; 
+  font-size: 30px; 
 }
 </style>

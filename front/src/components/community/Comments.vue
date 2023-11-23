@@ -20,10 +20,17 @@ const comment = ref(props.comment)
 const content = ref('')
 const newContent = ref('')
 
+const isLogin = useCounterStore().isLogin
+
 const showModify = ref(false);
 const showReComment = ref(false)
 
 const createComment = () => {
+    if (content.value.length==0) {
+        return alert('내용을 입력해 주세요')
+    } else if (content.value.length>200) {
+        return alert('내용은 200자를 넘어갈 수 없습니다.')
+    }
   const config = {
       method: 'POST',
       url: `${store.API_URL}/api/v1/community/posts/${post_pk}/comments/`,
@@ -50,6 +57,8 @@ const createComment = () => {
 
 // 댓글 삭제
 const deleteComment = () => {
+const confirmed = confirm('정말 댓글을 삭제하시겠습니까?');
+if (confirmed) {
   axios({
     method: 'DELETE',
     url: `${store.API_URL}/api/v1/community/comments/detail/${comment.value.id}/`,
@@ -63,11 +72,16 @@ const deleteComment = () => {
 })
 .catch((err)=>{
   console.log('실패', err)
-}) 
+})}
 }
 
 // 댓글 수정
 const commentModify = () => {
+    if (newContent.value.length==0) {
+        return alert('내용을 입력해 주세요')
+    } else if (newContent.value.length>200) {
+        return alert('내용은 200자를 넘어갈 수 없습니다.')
+    }
   axios({
         method: 'PUT',
         url: `${store.API_URL}/api/v1/community/comments/detail/${comment.value.id}/`,
@@ -111,42 +125,72 @@ const commentLike = () => {
 const removeComment = (commentToRemove) => {
   console.log(commentToRemove)
   const updatedComments = comment.value.children.filter(comment => comment.id !== commentToRemove.id);
-  comment.value = updatedComments;
+  comment.value.children = updatedComments;
 };
 
+const setRecomment = () => {
+  showReComment.value = !showReComment.value
+  showModify.value = false
+}
+
+const setModify = () => {
+  showReComment.value = false
+  showModify.value = !showModify.value
+}
 
 </script>
 
 <template>
-  <div class="card">
+  <div class="card mx-1">
     <div class="comment-container" v-if="comment.content">
-      <p style="font-size: 20px; display: inline-block;"> {{ comment.profile.nickname }}</p>
-      <p style="font-size: 13px; display: inline-block;" v-if="parentname">{{ parentname }}님에게 보내는 답글</p>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+
+        <div class="nickname-and-likes">
+          <p style="font-size: 20px; display: inline-block;"> {{ comment.profile.nickname }}</p>
+          <p style="font-size: 13px; display: inline-block;" v-if="parentname">{{ parentname }}님에게 보내는 답글</p>
+        </div>
+        <button @click="commentLike"  v-if="isLogin" :class="{
+        'btn': true,
+        'btn-info': comment.is_liked,
+        'btn-outline-info': !comment.is_liked
+          }"
+          style="color: red;">💕{{ comment.like_count }}
+        </button>
+      </div>
 
       <p>{{ comment.content }}</p>
+      
+      <div class="button-container">
+        <div>
+    </div>
 
-      <p class="card-text like-count">좋아요 : {{ comment.like_count }} 개</p>
-      <button @click="commentLike" class="btn btn-primary">
-        {{ comment.is_liked ? '좋아요 취소' : '좋아요' }}
-      </button>
+
 
       <template v-if="store.profileInfo?.id === comment.user">
-        <form v-show="showModify && comment.user" @submit.prevent="commentModify" class="modify-comment">
-            <label for="newContent" class="form-label">댓글 수정</label>
-            <input type="text" id="newContent" v-model="newContent" class="form-control">
-            <button type="submit" class="btn btn-warning ml-2">수정하기</button>
-        </form>
-        <button @click="showModify = !showModify" class="btn btn-secondary ml-2">{{showModify? '접기' : '수정하기'}}</button>
-        
-        <button @click="deleteComment" class="btn btn-danger ml-2">댓글 삭제</button>
-      </template>
-      <form @submit.prevent="createComment" v-show="showReComment" class="create-re-comment">
-        <label for="reComment" class="form-label">대댓글 입력</label>
-        <input type="text" id="reComment" v-model="content" class="form-control" placeholder="대댓글을 작성해주세요">
-        <button type="submit" class="btn btn-primary ml-2">작성하기</button>
-      </form>
-      <button @click="showReComment = !showReComment" class="btn btn-secondary ml-2">{{showReComment ? '접기' : '대댓글달기'}}</button>
 
+        <button @click="deleteComment" class="btn btn-danger ml-2">삭제</button>
+
+        <form v-if="isLogin && showModify" @submit.prevent="commentModify" class="modify-comment">
+          <div class="d-flex align-items-center">
+            <input type="text" id="newContent" v-model="newContent" class="form-control" placeholder="수정할 내용을 작성해주세요"  maxlength="200">
+            <p v-if="newContent.length >= 200" style="color: red;">최대 200글자까지 입력가능합니다.</p>
+            <button type="submit" class="btn btn-primary ml-2" style="white-space: nowrap; width: auto;">수정</button>
+          </div>
+          </form>
+        <button @click="setModify" class="btn btn-warning ml-2">{{showModify? '접기' : '수정'}}</button>
+
+      </template>
+
+        <form v-if="isLogin && showReComment" @submit.prevent="createComment" class="create-re-comment form-inline">
+          <div class="d-flex align-items-center">
+            <input type="text" id="reComment" v-model="content" class="form-control" placeholder="대댓글을 작성해주세요" maxlength="200">
+            <p v-if="content.length >= 200" style="color: red;">최대 200글자까지 입력가능합니다.</p>
+            <button type="submit" class="btn btn-primary ml-2" style="white-space: nowrap; width: auto;">작성</button>
+          </div>
+        </form>
+        <button  v-if="isLogin" @click="setRecomment" class="btn btn-success ml-2">{{showReComment ? '접기' : '답글'}}</button>
+      
+      </div>
         <Comments
           v-for="child in comment.children"
           :key="child.id" :comment="child"
@@ -198,5 +242,42 @@ const removeComment = (commentToRemove) => {
 }
 .btn{
   margin-right: 5px;
+}
+
+.btn-danger:hover {
+  background-color: red;
+  border: red 1px;
+}
+
+.btn-danger {
+  background-color: rgb(220,53,69);
+  border: rgb(220,53,69) 1px;
+}
+
+.btn-info {
+  background-color: rgb(241, 125, 166);
+  border: rgb(241, 125, 166) solid 1px;
+}
+.btn-outline-info {
+    border: rgb(241, 125, 166) solid 1px;
+}
+
+.btn-outline-info:hover,
+.btn-outline-info:active,
+.btn-info:hover,
+.btn-info:active {
+    border: rgb(255, 182, 208) solid 1px;
+    background-color: rgb(255, 182, 208);
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.nickname-and-likes {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
   </style>
