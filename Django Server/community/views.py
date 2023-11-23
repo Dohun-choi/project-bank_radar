@@ -174,6 +174,7 @@ def delete_notify(request, notify_pk):
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def post_search(request):
     query = request.GET.get('search_query')
     print(query)
@@ -188,6 +189,7 @@ def post_search(request):
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def popular_posts(request):
     if request.method == 'GET':
         popular_in_month = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')

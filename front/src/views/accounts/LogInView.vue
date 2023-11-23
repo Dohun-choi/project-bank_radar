@@ -1,10 +1,10 @@
 <template>
   <div>
     <div class="row justify-content-center">
-      <div class="col-md-6">
-        <h1 class="text-center mb-4" style="color: #e5007e;">Login</h1>
+      <div>
+        <h1 class="text-center" style="color: #e5007e;">Login</h1>
         <form @submit.prevent="logIn">
-          <div class="mb-3">
+          <div>
             <label for="username" class="form-label">Username</label>
             <input type="text" class="form-control" id="username" v-model.trim="username" style="width: 100%;">
           </div>
@@ -12,7 +12,12 @@
             <label for="password" class="form-label">Password</label>
             <input type="password" class="form-control" id="password" v-model.trim="password" style="width: 100%;">
           </div>
-          <button type="submit" class="btn btn-primary" style="background-color: #e5007e; border-color: #e5007e;">Log In</button>
+          <button type="submit" class="btn btn-primary"
+            style="background-color: #e5007e;
+            border-color: #e5007e; 
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;">Log In</button>
         </form>
       </div>
     </div>
@@ -42,5 +47,11 @@ store.logIn(payload)
 /* Additional custom styles can be added here */
 body {
 background-color: #f8f9fa;
+}
+
+input {
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
 }
 </style>

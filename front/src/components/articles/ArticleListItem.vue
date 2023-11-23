@@ -1,4 +1,5 @@
 <template>
+    <div>
   <div class="post-item">
     <RouterLink :to="{ name: 'DetailView', params: { id: post.id } }" class="naver-link">
       <div class="post-content">
@@ -11,6 +12,7 @@
     </RouterLink>
     <hr class="post-divider">
   </div>
+</div>
 </template>
 
 <script setup>
