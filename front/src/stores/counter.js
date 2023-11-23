@@ -149,6 +149,7 @@ const isLogin = computed(()=>{
       .then((res) =>{
           console.log('프로필 받아오기 성공', res)
           profileInfo.value = res.data
+          location.reload()
       })
       .catch((err)=>{
           console.log('프로필 받아오기 실패', err)
