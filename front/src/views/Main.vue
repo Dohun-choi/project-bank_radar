@@ -107,10 +107,4 @@ import 'bootstrap/dist/css/bootstrap.min.css';
   border-radius: 15px;
 }
 
-body {
-  background-image: url('@/assets/test1.png'); /* 이미지의 경로로 변경하세요 */
-  background-size: cover; /* 화면에 꽉 차도록 배경 이미지 크기 조절 */
-  background-position: center; /* 이미지를 화면 가운데로 정렬 */
-  background-repeat: no-repeat; /* 이미지 반복 없이 한 번만 표시 */
-}
 </style>

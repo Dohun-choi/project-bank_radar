@@ -13,16 +13,22 @@
                 </div>
                 <button type="submit" class="btn btn-primary ml-2">확인</button>
             </form>
+
+            <div>
+                <button @click="likeSort"> 좋아요 순서</button>
+                <button @click="rateSort"> 이율 순서</button>
+            </div>
+            
         </div>
     
         <div>
         <table class="table table-striped table-bordered">
             <thead>
             <tr class="table-primary">
-                <th scope="col">공시 제출 월</th>
+                <th scope="col">금융상품명</th>
+                <th scope="col">담당은행</th>
                 <th scope="col">가입 제한</th>
                 <th scope="col">가입 대상</th>
-                <th scope="col">가입 방법</th>
                 <th scope="col">최고 한도</th>
                 <th scope="col">좋아요</th>
             </tr>
@@ -30,12 +36,13 @@
             <tbody>
             <tr v-for="(product, index) in displayedProducts" :key="product.fin_prdt_cd" @click="goDetail(product.fin_prdt_cd)"
                 :style="{ background: index % 2 === 0 ? '#f5f5f5' : '' }">
-                <td>{{ product.dcls_month  }}</td>
-                <td v-if="product.join_deny === 1">제한 없음</td>
+                <!-- <td>{{ product  }}</td> -->
+                <td>{{ product.fin_prdt_nm }}</td>
+                <td>{{ product.kor_co_nm }}</td>
+                <td v-if="product.join_deny === 1">   - </td>
                 <td v-if="product.join_deny === 2">서민 전용</td>
                 <td v-if="product.join_deny === 3">일부 제한</td>
                 <td>{{ product.join_member  }}</td>
-                <td>{{ product.join_way  }}</td>
                 <td>{{ product.max_limit? formatNumber(product.max_limit) : '-' }} </td>
                 <td>{{ product.into_count}}명</td>
             </tr>
@@ -81,15 +88,21 @@
     const banks = ['국민은행', '부산은행', '대구은행', '광주은행', '제주은행', '전북은행', '주식회사 케이뱅크', '한국스탠다드차타드은행', '중소기업은행', '한국산업은행', '전북은행', '주식회사 카카오뱅크', '농협은행주식회사', '토스뱅크 주식회사', '수협은행', '경남은행', '광주은행', '신한은행', '하나은행' ];
     const periods = ['6개월', '12개월', '24개월', '36개월'];
     
+
+    // 테스트 시작
+    const likeSort = () => {
+        return products.sort((a, b) => a[into_count] - b[into_count])
+        } 
+    // 테스트 종료
     const selectedBank = ref(null);
     const selectedPeriod = ref(null);
     const itemsPerPage = 10; // 페이지당 아이템 수
     const currentPage = ref(1);
     
     const displayedProducts = computed(() => {
-    const start = (currentPage.value - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    return products.value.slice(start, end);
+        const start = (currentPage.value - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        return products.value.slice(start, end);
     });
     
     const totalPages = computed(() => Math.ceil(products.value.length / itemsPerPage));
@@ -102,7 +115,7 @@
     return pagesArray;
     });
     
-    const searchProducts = (selectedBank, selectedPeriod) => {
+    const searchProducts = selectedBank => {
     products.value = store.financeDepositsProducts.filter(product => {
         return (
         // 은행이 선택되지 않거나, 선택한 은행

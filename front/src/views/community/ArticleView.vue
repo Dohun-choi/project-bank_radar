@@ -29,7 +29,7 @@ import { onMounted, ref, computed } from 'vue';
 import { useCounterStore } from '@/stores/counter';
 import { RouterLink } from 'vue-router';
 import axios from 'axios';
-
+import 'bootstrap-icons/font/bootstrap-icons.css';
 const posts = ref(null)
 const store = useCounterStore()
 const API_URL = store.API_URL

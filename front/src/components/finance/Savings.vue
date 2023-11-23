@@ -22,6 +22,7 @@
             <th scope="col">금융상품명</th>
             <th scope="col">담당은행</th>
             <th scope="col">가입제한</th>
+            <th scope="col">가입대상</th>
             <th scope="col">최고한도</th>
             <th scope="col">좋아요</th>
         </tr>
@@ -31,9 +32,10 @@
             :style="{ background: index % 2 === 0 ? '#f5f5f5' : '' }">
             <td>{{ product.fin_prdt_nm }}</td>
             <td>{{ product.kor_co_nm }}</td>
-            <td v-if="product.join_deny === 1">제한 없음</td>
+            <td v-if="product.join_deny === 1">-</td>
             <td v-if="product.join_deny === 2">서민 전용</td>
             <td v-if="product.join_deny === 3">일부 제한</td>
+            <td>{{ product.join_member  }}</td>
             <td>{{ product.max_limit? formatNumber(product.max_limit) : '-' }} </td>
             <td>{{ product.into_count }}명</td>
         </tr>

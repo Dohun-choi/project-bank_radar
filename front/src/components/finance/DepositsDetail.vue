@@ -2,7 +2,7 @@
 <div>
     <div class="product-details">
     <h3 class="product-title">{{ product.kor_co_nm }} - {{ product.fin_prdt_nm }}</h3>
-    <p class="product-description">{{ product.etc_note }}</p>
+    <p class="product-description">{{ product.etc_note === '해당없음'? '추천상품' : product.etc_note }}</p>
     </div>
 
     <table class="table table-striped">
@@ -33,7 +33,7 @@
         </tr>
     </tbody>
     </table>
-
+    <p style="text-align: right;">가입방법 : {{ product.join_way }}</p>
     <!-- 게시글 달기 -->
     <hr />
     <form @submit.prevent="createDebate" class="mb-4">
@@ -44,8 +44,8 @@
 
     <!-- 게시글 보기 -->
     <hr />
+    <strong style="color: black">한줄평</strong>
     <div class="debates-container p-4 border rounded bg-light">
-    <h2 class="text-success font-weight-bold mb-4">투기장</h2>
     <div v-for="(debate, index) in debates" :key="debate.id" class="card mb-3 w-100">
         <div class="card-body">
         <p class="card-text">{{ index + 1 }}. {{ debate.content }}</p>
@@ -209,9 +209,5 @@ font-size: 16px;
 margin-top: 10px;
 }
 
-/* 투기장 타이틀 스타일 */
-h2.text-success {
-font-size: 2.5rem;
-margin-bottom: 1rem;
-}
+
 </style>
