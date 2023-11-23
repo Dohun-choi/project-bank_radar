@@ -2,11 +2,11 @@
   <div>
     <div  class="article-page-container">
     <h1 class="text-center mb-4">자유 게시판</h1>
-    <div class="contain">
-      <Search class="m-1 mb-3" @search="handleSearch"/>
-      <div>
-        <RouterLink :to="{name: 'CreateView'}" class="btn btn-magenta mb-3 m-1">글쓰기</RouterLink>
-        <button @click="popular" class="btn btn-magenta mb-3 m-1">{{ seePopular ? '인기글':'전체글' }}</button>
+    <div class="row">
+      <Search class="row m-1 mb-3" @search="handleSearch"/>
+      <div class="row row-cols-lg-auto justify-content-end" style="height: 100%;">
+        <RouterLink :to="{name: 'CreateView'}" class="btn btn-magenta col">글쓰기</RouterLink>
+        <button @click="popular" class="btn btn-magenta col">{{ seePopular ? '인기글':'전체글' }}</button>
       </div>
     </div>
 

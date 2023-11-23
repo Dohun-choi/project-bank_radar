@@ -5,7 +5,8 @@
     <div class="info card">
 
       <div class="card-header bg-custom text-white">
-        <p>{{post.title}}</p>
+        <p>{{ post.profile ? post.profile.nickname : '탈퇴한 유저' }}님의 글</p>
+        <h3>{{post.title}}</h3>
         <p>추천({{post.like_count }})</p>
       </div>
 
@@ -69,10 +70,17 @@ const commentcontent = ref('')
 
 
 onMounted(() => {
-  axios({
-    method: 'GET',
-    url: `${store.API_URL}/api/v1/community/posts/${route.params.id}/`,
-  })
+    const config = {
+        method: 'GET',
+        url: `${store.API_URL}/api/v1/community/posts/${route.params.id}/`,
+    }
+
+    if (store.token !== null) {
+        config.headers = {
+        Authorization: `Token ${store.token}`
+        }
+    }
+  axios(config)
     .then((res) => {
       console.log('게시글 세부 정보 가져오기 성공', res.data);
       post.value = res.data;

@@ -1,22 +1,22 @@
 <template>
     <div>
+        <div v-if="notifys.length === 0">알람이 없습니다.</div>
         <div v-for="(notify, index) in notifys" :key=notify.id >
             <p>content : {{ notify.content }}</p>
             <button @click="deleteNotify(notify.id, index)"> 삭제</button>
             <hr>
         </div>
     </div>
-
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useCounterStore } from '../../stores/counter';
 import axios from 'axios';
 
 const store = useCounterStore()
 
-const notifys = ref(null)
+const notifys = ref([])
 
 onMounted(() => {
     axios({

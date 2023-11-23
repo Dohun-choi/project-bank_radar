@@ -17,6 +17,13 @@
         <input type="password" id="pw2" v-model.trim="password2" class="form-control" />
       </div>
 
+      <template v-if="err">
+        <p v-for="er in err">
+          {{ er[0] }}
+        </p>  
+      </template>
+        
+      
       <button type="submit" class="btn btn-magenta w-100">제출하기</button>
     </form>
   </div>
@@ -26,12 +33,37 @@
 import { ref } from 'vue';
 import { useCounterStore } from '@/stores/counter';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import axios from 'axios';
 
 const store = useCounterStore();
+const API_URL = store.API_URL
 
 const username = ref(null);
 const password1 = ref(null);
 const password2 = ref(null);
+const err = ref(null)
+
+  // 6. 회원가입
+  const signUp2 = (payload) =>{
+      const { username, password1, password2 } = payload
+      axios({
+          method: 'post',
+          url: `${API_URL}/accounts/signup/`,
+          data:{
+          username, password1, password2
+          }
+      })
+      .then((res)=>{
+          console.log('회원가입 성공', res)
+          router.push({name: 'LogInView'})
+      })
+      .catch((error)=>{
+          console.log('회원가입 실패', error)
+          err.value = error.response.data
+          console.log(err)
+      })
+  }
+  
 
 const SignUp = () => {
   const payload = {
@@ -39,7 +71,7 @@ const SignUp = () => {
     password1: password1.value,
     password2: password2.value
   };
-  store.signUp(payload);
+  signUp2(payload);
 };
 </script>
 

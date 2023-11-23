@@ -52,7 +52,7 @@
     <div class="container" >
       <div class="row">
 
-        <div class="col-lg-2  mt-3">
+        <div class="col-lg-2 my-3">
           <div v-if="!CounterStore.isLogin" class="login-container" >
             <LogInView/>
               <br>
@@ -187,7 +187,7 @@ a {
 	overflow: hidden;
 	max-height: 500px;
 	
-	@media (max-width: 700px) {
+	@media (max-width: 992px) {
 			max-height: 00px;
 	}
 }

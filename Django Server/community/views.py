@@ -6,6 +6,8 @@ from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from django.shortcuts import get_object_or_404
 from django.db.models import Count
+from django.db.models import Q
+
 
 from .models import Post, Comment, Notify
 from .serializers import PostListSerializer, PostSerializer, NestedCommentSerializer, NotifySerializer
@@ -180,7 +182,9 @@ def post_search(request):
     print(query)
 
     if query:
-        matching_posts = Post.objects.filter(title__icontains=query)
+        matching_posts = Post.objects.filter(
+    Q(title__icontains=query) | Q(content__icontains=query)
+)
         serializer = PostListSerializer(matching_posts, many=True)
 
         return Response(serializer.data)
