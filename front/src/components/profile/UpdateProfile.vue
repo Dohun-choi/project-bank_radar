@@ -9,7 +9,7 @@
   
         <div class="mb-3">
           <label for="birth" class="form-label">생일:</label>
-          <input type="text" id="birth" class="form-control" :placeholder="userInfo.birth? userInfo.birth.slice(0, 10) :userInfo.birth"  v-model="birth">
+          <input type="date" id="birth" class="form-control" :placeholder="userInfo.birth ? userInfo.birth.slice(0, 10) :userInfo.birth"  v-model="birth">
           <small class="form-text text-muted">0000-00-00(년/월/일) 형식으로 입력해주세요.</small>
         </div>
   

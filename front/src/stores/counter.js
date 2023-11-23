@@ -230,30 +230,11 @@ const isLogin = computed(()=>{
     })
   }
 
-  // 13. search 테스트
-  const search = (query) => {
-    axios({
-      method: 'get',
-      url: `${API_URL}/api/v1/community/posts/search/`,
-      params: {
-        search_query: query
-      },
-    })
-    .then((res)=>{
-      console.log('검색 성공', res.data)
-      posts.value = res.data
-    })
-    .catch((err)=>{
-      console.log('검색 실패', err)
-    })
-  }
-
-
   return {posts, API_URL, getPosts, signUp, logIn,
      token, isLogin, getExchange, exchanges,
       logout,getFinanceSavingsProducts,
        getFinanceDepositsProducts, updateExchange,
         updateFinanceProducts, financeSavingsProducts,
          financeDepositsProducts, getProfile, profileInfo,
-          updateProfile, search}
+          updateProfile}
 }, { persist: true })

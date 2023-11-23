@@ -14,7 +14,7 @@
       </div>
       
       <div class="d-flex justify-content-between align-items-center mt-4">
-        <template v-if="store.profileInfo.id === post.user">
+        <template v-if="store.profileInfo?.id === post.user">
       <div>
         <button @click="deletePost" class="btn btn-danger naver-btn">DELETE</button>
         <button @click="moveModify" class="btn btn-warning naver-btn ml-2">MODIFY</button>

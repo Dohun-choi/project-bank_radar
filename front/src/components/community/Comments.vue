@@ -130,7 +130,7 @@ const removeComment = (commentToRemove) => {
         {{ comment.is_liked ? '좋아요 취소' : '좋아요' }}
       </button>
 
-      <template v-if="store.profileInfo.id === comment.user">
+      <template v-if="store.profileInfo?.id === comment.user">
         <form v-show="showModify && comment.user" @submit.prevent="commentModify" class="modify-comment">
             <label for="newContent" class="form-label">댓글 수정</label>
             <input type="text" id="newContent" v-model="newContent" class="form-control">

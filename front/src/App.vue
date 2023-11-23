@@ -63,7 +63,7 @@
           </div>
           <div v-if="CounterStore.isLogin">
             <SimpleProfile />
-        </div>
+          </div>
 
         <!-- <div class="mt-3">
           <ul class="list-group">
@@ -77,12 +77,60 @@
           </ul>
         </div> -->
 
-    </div>
+				<div class="parent-container">
+					<img src="https://pbs.twimg.com/media/EFHNcJQUcAI_acX.jpg" alt="바다 사진">
+				</div>
+        </div>
 
         <RouterView class="col-lg-10"/>
 
       </div>
     </div>
+
+
+    <footer class="footer mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>Contact Us</h5>
+                    <p>Phone: -</p>
+                    <p>Email: -</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Git Hub</h5>
+                    <ul class="list-inline">
+                        <li class="list-inline-item"><a href="https://github.com/Dohun-choi/project-bank_radar" target="_blank">Project</a></li>
+                        <li class="list-inline-item"><a href="https://github.com/MunsooKang" target="_blank">강문수</a></li>
+                        <li class="list-inline-item"><a href="https://github.com/Dohun-choi" target="_blank">최도훈</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Newsletter</h5>
+                    <p>Subscribe to our newsletter for travel updates and deals.</p>
+                    <form>
+                        <div class="form-group">
+                            <input type="email" class="form-control" placeholder="Enter email">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-md-6">
+                    <ul class="list-inline">
+                        <li class="list-inline-item"> <RouterLink to="/" @click="scrollToTop">Home</RouterLink></li>
+                        <li class="list-inline-item"><a href="https://github.com/Dohun-choi/project-bank_radar"  target="_blank">Destinations</a></li>
+                        <li class="list-inline-item"><a href="https://curt-poem.tistory.com/" target="_blank">Blog</a></li>
+                        <li class="list-inline-item"><a href="https://github.com/Dohun-choi/project-bank_radar" target="_blank">About Us</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-6 text-right">
+                    <p>&copy; 2023 Bank Radar. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
 
   </div>
 </template>
@@ -101,6 +149,14 @@ const route = useRoute()
 const isActive = (routeName) => {
   return route.name === routeName
 }
+
+const scrollToTop = () => {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+}
+
 </script>
 
 <style scoped>
@@ -117,10 +173,48 @@ const isActive = (routeName) => {
 .login-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
   text-align: center;
   border-radius: 10px;
   padding: 15px;
   background-color: whitesmoke; /* Magenta color */
+}
+
+a {
+  text-decoration: none;
+}
+
+.parent-container {
+	overflow: hidden;
+	max-height: 500px;
+	
+	@media (max-width: 700px) {
+			max-height: 00px;
+	}
+}
+
+
+
+footer {
+    background-color: #333;
+    color: #fff;
+    padding: 30px 0;
+}
+
+footer ul {
+    list-style: none;
+    padding: 0;
+}
+
+footer ul li {
+    margin-bottom: 10px;
+}
+
+footer a {
+    color: #fff;
+}
+
+footer a:hover {
+    color: #aaa;
+    text-decoration: none;
 }
 </style>

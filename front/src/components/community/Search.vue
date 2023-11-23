@@ -11,15 +11,33 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, getCurrentInstance } from 'vue';
 import { useCounterStore } from '@/stores/counter';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import axios from 'axios'
 
-const search_query = ref('')
+const currentInstance = getCurrentInstance();
 const store = useCounterStore()
+const API_URL = store.API_URL
+const search_query = ref('')
+
 const search = () => {
-  store.search(search_query.value)
-}
+    axios({
+      method: 'get',
+      url: `${API_URL}/api/v1/community/posts/search/`,
+      params: {
+        search_query: search_query.value
+      },
+    })
+    .then((res)=>{
+      console.log('검색 성공', res.data)
+      currentInstance.emit('search', res.data)
+      
+    })
+    .catch((err)=>{
+      console.log('검색 실패', err)
+    })
+  }
 </script>
 
 <style scoped>
