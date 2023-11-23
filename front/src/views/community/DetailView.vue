@@ -5,7 +5,8 @@
     <div class="info card">
 
       <div class="card-header bg-custom text-white">
-        <p>{{post.title}}</p>
+        <p>{{ post.profile ? post.profile.nickname : '탈퇴한 유저' }}님의 글</p>
+        <h3>{{post.title}}</h3>
         <p>추천({{post.like_count }})</p>
       </div>
 
