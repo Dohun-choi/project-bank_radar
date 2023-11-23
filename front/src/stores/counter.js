@@ -15,6 +15,7 @@ const exchanges = ref(null) // 환율 불러오기
 const financeDepositsProducts = ref(null) // 예금 불러오기
 const financeSavingsProducts = ref(null) // 적금 불러오기
 const posts = ref(null) // 포스트 정보
+const err = ref(null)
   
 
 // 1. 로그인 유무(토큰 구하기)
@@ -109,25 +110,6 @@ const isLogin = computed(()=>{
           console.log('Savings 가져오기 실패', err)
       })
       }
-  
-  // 6. 회원가입
-  const signUp = (payload) =>{
-      const { username, password1, password2 } = payload
-      axios({
-          method: 'post',
-          url: `${API_URL}/accounts/signup/`,
-          data:{
-          username, password1, password2
-          }
-      })
-      .then((res)=>{
-          console.log('회원가입 성공', res)
-          router.push({name: 'LogInView'})
-      })
-      .catch((err)=>{
-          console.log('회원가입 실패', err)
-      })
-  }
   
   // 7. 로그 아웃
   const logout = () => {
@@ -231,7 +213,7 @@ const isLogin = computed(()=>{
     })
   }
 
-  return {posts, API_URL, getPosts, signUp, logIn,
+  return {posts, API_URL, getPosts, logIn,
      token, isLogin, getExchange, exchanges,
       logout,getFinanceSavingsProducts,
        getFinanceDepositsProducts, updateExchange,

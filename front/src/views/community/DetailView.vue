@@ -70,13 +70,17 @@ const commentcontent = ref('')
 
 
 onMounted(() => {
-  axios({
-    method: 'GET',
-    url: `${store.API_URL}/api/v1/community/posts/${route.params.id}/`,
-    headers: {
-      Authorization: `Token ${store.token}`
+    const config = {
+        method: 'GET',
+        url: `${store.API_URL}/api/v1/community/posts/${route.params.id}/`,
     }
-  })
+
+    if (store.token !== null) {
+        config.headers = {
+        Authorization: `Token ${store.token}`
+        }
+    }
+  axios(config)
     .then((res) => {
       console.log('게시글 세부 정보 가져오기 성공', res.data);
       post.value = res.data;
