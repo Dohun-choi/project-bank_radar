@@ -35,7 +35,7 @@
           <RouterLink :to="{ name: 'FinanceSavingsView' }" class="nav-link" :class="{ 'active': isActive('FinanceSavingsView') }">적금</RouterLink>
         </li>
         <li class="nav-item">
-          <RouterLink :to="{ name: 'ExchangeView' }" class="nav-link" :class="{ 'active': isActive('ExchangeView') }">환율</RouterLink>
+          <RouterLink :to="{ name: 'ExchangeMapView' }" class="nav-link" :class="{ 'active': isActive('ExchangeMapView') }">환율&지도</RouterLink>
         </li>
         <li class="nav-item">
           <RouterLink :to="{ name: 'RecommendItemView' }" class="nav-link" :class="{ 'active': isActive('RecommendItemView') }">적금 상품 추천</RouterLink>
@@ -106,12 +106,12 @@
                 </div>
                 <div class="col-md-4">
                     <h5>Newsletter</h5>
-                    <p>Subscribe to our newsletter for travel updates and deals.</p>
+                    <p>더 많은 금융상품과 여행지 정보에 대해 알람을 받아보세요</p>
                     <form>
                         <div class="form-group">
                             <input type="email" class="form-control" placeholder="Enter email">
                         </div>
-                        <button type="submit" class="btn btn-primary">Subscribe</button>
+                        <button type="submit" class="btn btn-primary">구독하기</button>
                     </form>
                 </div>
             </div>

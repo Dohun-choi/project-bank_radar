@@ -10,8 +10,8 @@ import UpdateProfile from '@/components/profile/UpdateProfile.vue'
 import Subscribes from '@/components/profile/Subscribes.vue'
 import SignUpView from '@/views//accounts/SignUpView.vue'
 import LoginView from '@/views/accounts/LoginView.vue'
-import MapView from '@/views/map/MapView.vue'
-import ExchangeView from '@/views/exchange/ExchangeView.vue'
+import ExchangeMapView from '@/views/exchangeMap/ExchangeMapView.vue'
+
 import RecommendItemView from '@/views/recommend/RecommendItemView.vue'
 import RecommendTravelView from '@/views/recommend/RecommendTravelView.vue'
 
@@ -20,7 +20,6 @@ import FinanceSavingsView from '@/views/finance/FinanceSavingsView.vue'
 import SavingsDetail from '@/components/finance/SavingsDetail.vue'
 import DepositsDetail from '@/components/finance/DepositsDetail.vue'
 
-import { useCounterStore } from '@/stores/counter'
 
 import MainView from '@/views/Main.vue'
 
@@ -58,15 +57,11 @@ const router = createRouter({
       component: LoginView
     },
     {
-      path: '/map',
-      name: 'MapView',
-      component: MapView
+      path: '/exchange/map',
+      name: 'ExchangeMapView',
+      component: ExchangeMapView
     },
-    {
-      path: '/exchange',
-      name: 'ExchangeView',
-      component: ExchangeView
-    },
+
     {
       path: '/post/modify/:id',
       name: 'ModifyView',

@@ -1,25 +1,22 @@
 <template>
     <div>
         <div class="search-form">
-            <p class="search-title">검색하기</p>
-            <form @submit.prevent="searchProducts(selectedBank, selectedPeriod)" class="d-flex">
-                <!-- 은행 -->
-                <div class="form-group">
-                    <select v-model="selectedBank" class="form-control form-select mr-2">
-                        <option v-for="bank in banks" :value="bank" :key="bank">
-                        {{ bank }}
-                        </option>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-primary ml-2">확인</button>
-            </form>
-
-            <div>
-                <button @click="likeSort"> 좋아요 순서</button>
-                <button @click="rateSort"> 이율 순서</button>
+        <p class="search-title">검색하기</p>
+        <div class="d-flex" style="display: flex; justify-content: space-between;">
+        <form @submit.prevent="searchProducts(selectedBank, selectedPeriod)" class="d-flex">
+            <!-- 은행 -->
+            <div class="form-group">
+            <select v-model="selectedBank" class="form-control form-select mr-2">
+                <option v-for="bank in banks" :value="bank" :key="bank">
+                {{ bank }}
+                </option>
+            </select>
             </div>
-            
+            <button type="submit" class="btn btn-primary ml-2">확인</button>
+        </form>
+        <button @click="btn" class="btn btn-primary ml-2">좋아요순</button>
         </div>
+    </div>
     
         <div>
         <table class="table table-striped table-bordered">
@@ -36,7 +33,7 @@
             <tbody>
             <tr v-for="(product, index) in displayedProducts" :key="product.fin_prdt_cd" @click="goDetail(product.fin_prdt_cd)"
                 :style="{ background: index % 2 === 0 ? '#f5f5f5' : '' }">
-                <!-- <td>{{ product  }}</td> -->
+                <!-- <td>{{ products  }}</td> -->
                 <td>{{ product.fin_prdt_nm }}</td>
                 <td>{{ product.kor_co_nm }}</td>
                 <td v-if="product.join_deny === 1">   - </td>
@@ -85,15 +82,21 @@
     const formatNumber = num => new Intl.NumberFormat().format(num);
     
     const products = ref(store.financeDepositsProducts);
+
+    const origin = JSON.parse(JSON.stringify(products.value))
+
     const banks = ['국민은행', '부산은행', '대구은행', '광주은행', '제주은행', '전북은행', '주식회사 케이뱅크', '한국스탠다드차타드은행', '중소기업은행', '한국산업은행', '전북은행', '주식회사 카카오뱅크', '농협은행주식회사', '토스뱅크 주식회사', '수협은행', '경남은행', '광주은행', '신한은행', '하나은행' ];
     const periods = ['6개월', '12개월', '24개월', '36개월'];
     
+    const sort = ref(false)
+    const btn = () => {
+        sort.value = !sort.value
+        if (sort.value){
+        products.value = products.value.sort((a, b) => b.into_count - a.into_count);}
+        else {products.value = origin}
+        console.log(origin)
+    }
 
-    // 테스트 시작
-    const likeSort = () => {
-        return products.sort((a, b) => a[into_count] - b[into_count])
-        } 
-    // 테스트 종료
     const selectedBank = ref(null);
     const selectedPeriod = ref(null);
     const itemsPerPage = 10; // 페이지당 아이템 수
