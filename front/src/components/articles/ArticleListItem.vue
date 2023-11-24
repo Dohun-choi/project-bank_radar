@@ -17,7 +17,6 @@
 
 <script setup>
 import { useCounterStore } from '@/stores/counter';
-import { defineProps } from 'vue';
 
 const props = defineProps({
     post: Object,
@@ -72,6 +71,8 @@ let postNum = 1
 
 .post-content:hover {
   background-color: #f8f8f8;
+  transform: scale(1.03);
+  transition: transform 0.3s ease-in-out;
 }
 
 .post-divider {

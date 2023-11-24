@@ -78,7 +78,7 @@
         </div> -->
 
 				<div class="parent-container">
-					<img src="https://pbs.twimg.com/media/EFHNcJQUcAI_acX.jpg" alt="바다 사진">
+					<img src="@\assets\advertisement.jpg" alt="광고">
 				</div>
         </div>
 
@@ -185,11 +185,17 @@ a {
 
 .parent-container {
 	overflow: hidden;
-	max-height: 500px;
+	max-height: 680px;
 	
 	@media (max-width: 992px) {
 			max-height: 00px;
 	}
+}
+
+.parent-container img {
+  max-width: 100%;
+  height: auto;
+  margin: 5px;
 }
 
 
