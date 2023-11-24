@@ -1,9 +1,9 @@
 <template>
     <div>
         <div v-if="notifys.length === 0">알람이 없습니다.</div>
-        <div v-for="(notify, index) in notifys.slice().reverse()" :key=notify.id >
+        <div v-for="(notify) in notifys.slice().reverse()" :key=notify.id >
             <p :class="{read : notify.read===true }">content : {{ notify.content }}</p>
-            <button @click="deleteNotify(notify.id, index)"> 삭제</button>
+            <button @click="deleteNotify(notify.id)"> 삭제</button>
             <hr>
         </div>
     </div>
@@ -35,7 +35,7 @@ onMounted(() => {
     })
 });
 
-const deleteNotify = (notifyId, index) => {
+const deleteNotify = (notifyId) => {
     axios({
         method: 'DELETE',
         url: `${store.API_URL}/api/v1/community/notify/${notifyId}`,
@@ -45,7 +45,7 @@ const deleteNotify = (notifyId, index) => {
     })
     .then((res)=>{
         console.log('notify delete 성공');
-        notifys.value.splice(index, 1)
+        notifys.value = notifys.value.filter((a) => a.id !== notifyId)
     })
     .catch((err)=>{
     console.log('notify delete 실패', err)

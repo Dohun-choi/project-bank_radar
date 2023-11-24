@@ -78,7 +78,12 @@
         </div> -->
 
 				<div class="parent-container">
-					<img src="@\assets\advertisement.jpg" alt="광고">
+          <a href="https://www.ssafy.com/ksp/jsp/swp/swpMain.jsp" target="_blank">
+						<img src="@\assets\advertisement.jpg" alt="광고">
+          </a>
+					<a href="https://www.ssafy.com/ksp/jsp/swp/swpMain.jsp" target="_blank">
+						<img src="@\assets\advertisement.jpg" alt="광고">
+          </a>
 				</div>
         </div>
 

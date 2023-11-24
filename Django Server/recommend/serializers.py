@@ -13,7 +13,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class TravelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Travel
-        fields = ('country', 'cost', 'img_url' )
+        fields = ('country', 'cost', 'img_url', 'when', )
 
 
 class CountrySerializer(serializers.ModelSerializer):

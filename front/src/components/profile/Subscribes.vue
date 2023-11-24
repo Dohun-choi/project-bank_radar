@@ -34,8 +34,6 @@
     <h2 style="color: #e5007e;">가입한 상품 금리</h2>
     <canvas ref="myChart"></canvas>
     </div>
-
-    <button @click="btn">btn</button>
 </div>
 </template>
 

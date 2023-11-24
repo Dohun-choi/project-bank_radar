@@ -28,6 +28,7 @@
         <div class="input-group">
         <input type="text" class="form-control" v-model="price" @input="calculatePrice" placeholder="금액">
         </div>
+        <p v-if="isNaN(price)">숫자를 입력하세요.</p>
     </div>
 
     <div class="col-md-6 mt-4">
@@ -36,12 +37,17 @@
     </div>
     </div>
 </div>
+
+<GoogleMap :country="country2"/>
+
+
 </template>
 
 <script setup>
 import { useCounterStore } from '@/stores/counter';
 import { ref } from 'vue';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import GoogleMap from './GoogleMap.vue';
 
 const store = useCounterStore();
 

@@ -155,8 +155,7 @@ def travel_recommand(request, save_period):
 @permission_classes([IsAuthenticated])
 def get_saving_for_travel(request, country):
 
-    cost = get_object_or_404(Travel, country=country).cost
-    cost //= 10000
+    cost = 300_000
     savings_above_cost = SavingOptions.objects.filter(max_saving_output__gt=cost) \
     .order_by('?')[:5]
 

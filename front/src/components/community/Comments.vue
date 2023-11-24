@@ -147,6 +147,7 @@ const setModify = () => {
 
         <div class="nickname-and-likes">
           <p style="font-size: 20px; display: inline-block;"> {{ comment.profile.nickname }}</p>
+          <p>{{ comment.updated_at.slice(0, 10) }} {{ comment.updated_at.slice(11, 16) }}</p>
           <p style="font-size: 13px; display: inline-block;" v-if="parentname">{{ parentname }}님에게 보내는 답글</p>
         </div>
         <button @click="commentLike"  v-if="isLogin" :class="{

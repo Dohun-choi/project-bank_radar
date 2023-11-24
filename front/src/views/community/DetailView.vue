@@ -110,6 +110,7 @@ const deletePost = () => {
     .then((res) => {
       console.log('게시글 삭제 성공');
       router.push({ name: 'ArticleView' });
+
     })
     .catch((err) => {
       console.log('게시글 삭제 실패', err);

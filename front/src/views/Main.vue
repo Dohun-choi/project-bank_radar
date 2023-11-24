@@ -6,7 +6,8 @@
       <div class="container">
         <h1 class="display-4">Bank Radar</h1>
       <p class="lead">
-        당신을 위한 저축 상품을 찾고 있는 레이더의 모습을 형상화하였어요. 레이더는 당신의 마음에 활력을 불어넣어줄 여행지까지 찾아준답니다.
+        당신을 위한 저축 상품을 찾고 있는 레이더의 모습을 형상화하였어요. <br>
+        레이더는 당신의 마음에 활력을 불어넣어줄 여행지까지 찾아준답니다.
       </p>
     </div>
     </section>
@@ -54,7 +55,8 @@
           <div class="card border rounded h-100 custom-style-card">
             <div class="card-body">
               <h5 class="card-title">💸 여행을 원하지만 비용 걱정으로 망설이는 사람들</h5>
-              <p class="card-text">여행은 하고 싶지만 비용 때문에 망설이는 분들을 위해, Bank Radar가 여행 비용과 적금 상품을 추천하여 여행 계획을 지원해드려요.</p>
+              <p class="card-text">여행은 하고 싶지만 비용 때문에 망설이는 분들을 위해,<br>
+                여행 비용과 적금 상품을 추천하여 여행 계획을 지원해드려요.</p>
             </div>
           </div>
         </div>
@@ -62,8 +64,9 @@
         <div class="col-md-4 mb-4">
           <div class="card border rounded h-100 custom-style-card">
             <div class="card-body">
-              <h5 class="card-title">🌍 여행을 즐기며 돈도 아끼는 특별한 방법</h5>
-              <p class="card-text">여행을 즐기면서 돈을 아끼고 싶어하는 분들을 위해 Bank Radar가 특별한 저축 상품을 제안해요.</p>
+              <h5 class="card-title">🌍 여행을 위해 돈을 모으는 최적의 방법</h5>
+              <p class="card-text">여행을 위해 적금이 필요한 분들을 위해,<br>
+                특별한 저축 상품을 제안해요.</p>
             </div>
           </div>
         </div>
@@ -72,7 +75,8 @@
           <div class="card border rounded h-100 custom-style-card">
             <div class="card-body">
               <h5 class="card-title">🌟 적금 만기 후 여행을 계획하는 사람들</h5>
-              <p class="card-text">적금이 만기를 맞은 후 여행을 꿈꾸는 분들을 위해, Bank Radar가 여행지 추천을 도와줘요.</p>
+              <p class="card-text">적금이 만기를 맞은 후 여행을 꿈꾸는 분들을 위해,<br>
+                여행지 추천을 도와줘요.</p>
             </div>
           </div>
         </div>

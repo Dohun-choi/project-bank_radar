@@ -1,20 +1,21 @@
 <template>
     <div class="mt-4">
-        <form @submit.prevent="searchPlace" class="mb-3">
+        <!-- <form @submit.prevent="searchPlace" class="mb-3">
         <div class="input-group">
             <input type="text" v-model="inputPlace" class="form-control" placeholder="장소 검색" />
             <button type="submit" class="btn btn-primary">검색</button>
         </div>
-        </form>
+        </form> -->
         <div v-if="loading" class="alert alert-info">로딩 중...</div>
         <div id="map" style="width: 100%; height: 400px;"></div>
     </div>
+    {{ search1 }}
     </template>
     
     <script setup>
-    import { ref, onMounted } from 'vue';
+    import { ref, onMounted, watch } from 'vue';
     import 'bootstrap/dist/css/bootstrap.min.css';
-    
+
     let map;
     let service;
     let infowindow;
@@ -23,13 +24,13 @@
     const selectedPlace = ref(null);
     
     const initMap = () => {
-    const ssafy = new google.maps.LatLng(35.0953265, 128.8556681);
-    
-    infowindow = new google.maps.InfoWindow();
-    map = new google.maps.Map(document.getElementById('map'), {
-        center: ssafy,
-        zoom: 15,
-    });
+        const ssafy = new google.maps.LatLng(35.1796, 129.0756);
+
+        infowindow = new google.maps.InfoWindow();
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: ssafy,
+            zoom: 15,
+        });
     };
     
     const createMarker = (place) => {
@@ -91,4 +92,25 @@
     script.onload = initMap; // 이 부분 추가
     document.head.appendChild(script);
     });
+
+    const props = defineProps({
+    country: String,
+})
+
+    watch(() => props.country, (newV, oldV) => {
+        if (oldV !== null){
+            console.log(newV)
+            if(newV.cur_nm === '위안화' || newV.cur_nm === '중국'){newV.cur_nm = '중국'}
+
+            if(newV.cur_nm === '유로' || newV.cur_nm === '유럽'){
+                newV.cur_nm = '유럽'
+                inputPlace.value = '유럽연합 본부'
+            } else {
+                inputPlace.value = `${newV.cur_nm.split(' ')[0]} 수도`
+            }
+
+        console.log(inputPlace.value)
+        searchPlace()
+        }
+    })
     </script>

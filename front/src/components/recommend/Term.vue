@@ -21,7 +21,7 @@
             <h5 class="card-title">{{ index + 1 }}번째 추천 여행지</h5>
             <p class="card-text">국가명: {{ recommend.country }}</p>
             <p class="card-text">평균 경비(원): {{ recommend.cost }}</p>
-            <p class="card-text">추천 기간(월): {{ recommend.when }}</p>
+            <p class="card-text">추천 기간(월): {{ recommend.when.replace(/,/g,' ') }}</p>
         </div>
         </div>
         </a>

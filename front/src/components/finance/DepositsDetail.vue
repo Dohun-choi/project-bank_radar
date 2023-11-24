@@ -13,8 +13,8 @@
         <th scope="col">기본 금리</th>
         <th scope="col">최대 금리</th>
         <th scope="col">금리 형식</th>
-        <th scope="col">좋아요 수</th>
-        <th scope="col">좋아요(가입)</th>
+        <th scope="col">가입자 수</th>
+        <th scope="col">가입</th>
         </tr>
     </thead>
     <tbody v-for="(option, index) in options" :key="option.id">
@@ -197,7 +197,7 @@ width: 100%;
 }
 
 .product-title {
-color: #e5007e; /* Magenta color */
+color: #00376b;
 font-size: 24px;
 font-weight: bold;
 margin-bottom: 10px;
@@ -208,6 +208,7 @@ color: #333;
 font-size: 16px;
 margin-top: 10px;
 }
+
 
 
 </style>

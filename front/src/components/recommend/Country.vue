@@ -15,7 +15,7 @@
     <div>
     <div v-for="(recommend, index) in recommendItem" :key="recommend.id" class="mb-3">
         <div @click="goSavingsDetail(recommend.fin_prdt_cd)" class="card recommend-card">
-        <img src="@/assets/win.png" class="card-img-top" alt="Product Image">
+        <img src="https://www.infostockdaily.co.kr/news/photo/202309/194484_182936_411.jpg" class="card-img-top" alt="Product Image">
         <div class="card-body">
             <h5 class="card-title">{{ index + 1 }}번째 추천 적금상품</h5>
             <p class="card-text">{{ recommend.kor_co_nm }} - {{ recommend.fin_prdt_nm }}</p>
@@ -108,7 +108,8 @@ transform: scale(1.05);
 border-top-left-radius: 10px;
 border-top-right-radius: 10px;
 object-fit: cover;
-height: 200px;
+max-width: 100%;
+height: auto;
 }
 
 .card-body {

@@ -116,6 +116,7 @@ const isLogin = computed(()=>{
       token.value = null
       profileInfo.value = null
       localStorage.clear()
+      router.push({'name':'MainView'})
       alert('로그아웃 되었습니다.')
   }
   

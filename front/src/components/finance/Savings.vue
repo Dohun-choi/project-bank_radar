@@ -14,7 +14,7 @@
             </div>
             <button type="submit" class="btn btn-primary ml-2">확인</button>
         </form>
-        <button @click="btn" class="btn btn-primary ml-2">좋아요순</button>
+        <button @click="btn" class="btn btn-primary ml-2">가입자순</button>
         </div>
     </div>
     
@@ -27,7 +27,7 @@
                 <th scope="col">가입제한</th>
                 <th scope="col">가입대상</th>
                 <th scope="col">최고한도</th>
-                <th scope="col">좋아요</th>
+                <th scope="col">가입자 수</th>
             </tr>
             </thead>
             <tbody>
@@ -160,5 +160,9 @@
         .form-group {
         margin-bottom: 0;
         }
+
+th {
+  white-space: nowrap;
+}
     </style>
     

@@ -5,8 +5,8 @@
     <form @submit.prevent="searchDeposits" class="mb-3">
     <div class="d-flex">
         <select v-model="selectedOption" class="form-select mr-2">
-        <option v-for="option in options" :value="option" :key="option">
-            {{ option }}
+        <option v-for="v, k in options" :value="v" :key="k">
+            {{ k }}
         </option>
         </select>
         <input type="submit" value="추천 받기" class="btn btn-primary">
@@ -37,7 +37,7 @@ const router = useRouter();
 const store = useCounterStore();
 const recomandDeposit = ref(null);
 const selectedOption = ref(null);
-const options = ['age', 'monthly_income', 'assets', 'likes'];
+const options = {'나이': 'age', '월 수입' : 'monthly_income', '자산' :'assets', '가입자 수':'likes'}
 
 const searchDeposits = () => {
 axios({
